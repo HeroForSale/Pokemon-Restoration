@@ -2233,10 +2233,10 @@ const struct SpeciesInfo gSpeciesInfoGen5[] =
     [SPECIES_ZEBSTRIKA] =
     {
         .baseHP        = 75,
-        .baseAttack    = 100,
+        .baseAttack    = 70,
         .baseDefense   = 63,
         .baseSpeed     = 116,
-        .baseSpAttack  = 80,
+        .baseSpAttack  = 110,
         .baseSpDefense = 63,
         .types = MON_TYPES(TYPE_ELECTRIC),
         .catchRate = 75,
