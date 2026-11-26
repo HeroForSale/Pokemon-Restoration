@@ -2383,12 +2383,62 @@ void SpriteCB_WildMon(struct Sprite *sprite)
     }
 }
 
+// Pixels per frame for the battle-start slide-in. Vanilla is 2 (120 frames).
+// Normal battles use 3 (80 frames); major battles keep the vanilla speed.
+// Every value used must divide DISPLAY_WIDTH evenly.
+#define INTRO_SLIDE_SPEED_MAJOR   2
+#define INTRO_SLIDE_SPEED_NORMAL  3
+
+static bool32 IsMajorTrainerClass(u16 trainerId)
+{
+    switch (GetTrainerClassFromId(trainerId))
+    {
+    case TRAINER_CLASS_LEADER:
+    case TRAINER_CLASS_ELITE_FOUR:
+    case TRAINER_CLASS_CHAMPION:
+    case TRAINER_CLASS_RIVAL:
+    case TRAINER_CLASS_AQUA_ADMIN:
+    case TRAINER_CLASS_AQUA_LEADER:
+    case TRAINER_CLASS_MAGMA_ADMIN:
+    case TRAINER_CLASS_MAGMA_LEADER:
+        return TRUE;
+    default:
+        return FALSE;
+    }
+}
+
+u32 GetBattleIntroSlideSpeed(void)
+{
+    // Link, recorded and in-game partner battles keep vanilla timing.
+    if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED | BATTLE_TYPE_RECORDED_LINK | BATTLE_TYPE_INGAME_PARTNER))
+        return INTRO_SLIDE_SPEED_MAJOR;
+    if (gBattleTypeFlags & BATTLE_TYPE_LEGENDARY)
+        return INTRO_SLIDE_SPEED_MAJOR;
+    if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+     && !(gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_SECRET_BASE | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_HILL)))
+    {
+        if (IsMajorTrainerClass(TRAINER_BATTLE_PARAM.opponentA))
+            return INTRO_SLIDE_SPEED_MAJOR;
+        if ((gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS) && IsMajorTrainerClass(TRAINER_BATTLE_PARAM.opponentB))
+            return INTRO_SLIDE_SPEED_MAJOR;
+    }
+    if ((gBattleTypeFlags & BATTLE_TYPE_FRONTIER) && TRAINER_BATTLE_PARAM.opponentA == TRAINER_FRONTIER_BRAIN)
+        return INTRO_SLIDE_SPEED_MAJOR;
+    return INTRO_SLIDE_SPEED_NORMAL;
+}
+
 static void SpriteCB_MoveWildMonToRight(struct Sprite *sprite)
 {
     if ((gIntroSlideFlags & 1) == 0)
     {
         if (B_FAST_INTRO_NO_SLIDE == FALSE && !gTestRunnerHeadless)
-            sprite->x2 += 2;
+        {
+            u32 speed = GetBattleIntroSlideSpeed();
+            if (sprite->x2 < 0 && sprite->x2 > -(s32)speed)
+                sprite->x2 = 0;
+            else
+                sprite->x2 += speed;
+        }
         else
             sprite->x2 = 0;
 
@@ -2534,7 +2584,11 @@ static void SpriteCB_BattleSpriteSlideLeft(struct Sprite *sprite)
 {
     if (!(gIntroSlideFlags & 1))
     {
-        sprite->x2 -= 2;
+        u32 speed = GetBattleIntroSlideSpeed();
+        if (sprite->x2 > 0 && sprite->x2 < (s32)speed)
+            sprite->x2 = 0;
+        else
+            sprite->x2 -= speed;
         if (sprite->x2 == 0)
         {
             sprite->callback = SpriteCB_Idle;
