@@ -4,7 +4,9 @@
 #include "battle_pyramid.h"
 #include "event_data.h"
 #include "fieldmap.h"
+#include "caps.h"
 #include "fishing.h"
+#include "frontier_util.h"
 #include "follower_npc.h"
 #include "item.h"
 #include "random.h"
@@ -369,7 +371,7 @@ static u32 ChooseWildMonIndex_Fishing(u8 rod)
     return wildMonIndex;
 }
 
-u8 ChooseWildMonLevel(const struct WildPokemon *wildPokemon, u8 wildMonIndex, enum WildPokemonArea area)
+static u8 ChooseTableWildMonLevel(const struct WildPokemon *wildPokemon, u8 wildMonIndex, enum WildPokemonArea area)
 {
     u8 min;
     u8 max;
@@ -416,6 +418,26 @@ u8 ChooseWildMonLevel(const struct WildPokemon *wildPokemon, u8 wildMonIndex, en
         else // Failsafe
             return wildPokemon[wildMonIndex].maxLevel + 1;
     }
+}
+
+// Wild levels follow the player's highest-level Pokémon: 5-7 levels below it,
+// or 4-6 below it once it has reached the current level cap. The route's own
+// table level is used as a floor, so wild Pokémon are never weaker than vanilla.
+u8 ChooseWildMonLevel(const struct WildPokemon *wildPokemon, u8 wildMonIndex, enum WildPokemonArea area)
+{
+    s32 tableLevel = ChooseTableWildMonLevel(wildPokemon, wildMonIndex, area);
+    s32 ace, offset, scaledLevel;
+
+    if (gMapHeader.mapLayoutId == LAYOUT_BATTLE_FRONTIER_BATTLE_PIKE_ROOM_WILD_MONS)
+        return tableLevel;
+
+    ace = GetHighestLevelInPlayerParty();
+    offset = (ace >= (s32)GetCurrentLevelCap()) ? 6 : 7;
+    scaledLevel = ace - offset + (Random() % 3);
+
+    if (scaledLevel < 1)
+        scaledLevel = 1;
+    return (scaledLevel > tableLevel) ? scaledLevel : tableLevel;
 }
 
 u16 GetCurrentMapWildMonHeaderId(void)

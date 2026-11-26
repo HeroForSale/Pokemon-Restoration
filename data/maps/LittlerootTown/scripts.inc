@@ -898,6 +898,9 @@ LittlerootTown_EventScript_GiveRunningShoes::
 	message LittlerootTown_Text_SwitchShoesWithRunningShoes
 	waitfanfare
 	setflag FLAG_RECEIVED_RUNNING_SHOES
+	giveitem ITEM_EXP_SHARE
+	setflag FLAG_UNUSED_0x265 @ Exp. Share starts switched on
+	setflag FLAG_RECEIVED_EXP_SHARE @ skips the Devon Corp reward later
 	msgbox LittlerootTown_Text_ExplainRunningShoes, MSGBOX_DEFAULT
 	msgbox LittlerootTown_Text_ComeHomeIfAnythingHappens, MSGBOX_DEFAULT
 	closemessage
