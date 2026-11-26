@@ -235,6 +235,7 @@ Route101_EventScript_BirchsBag::
 	setflag FLAG_HIDE_ROUTE_101_BIRCH_STARTERS_BAG
 	setvar VAR_BIRCH_LAB_STATE, 2
 	setvar VAR_ROUTE101_STATE, 3
+	call_if_lt VAR_LITTLEROOT_RIVAL_STATE, 3, Route101_EventScript_SkipRivalMeeting
 	clearflag FLAG_HIDE_MAP_NAME_POPUP
 	checkplayergender
 	call_if_eq VAR_RESULT, MALE, Route101_EventScript_HideMayInBedroom
@@ -243,6 +244,15 @@ Route101_EventScript_BirchsBag::
 	waitstate
 	release
 	end
+
+@ TESTING: the player skipped the rival's house. Mark the meeting as done so the
+@ bedroom cutscene can't fire after the rescue and reset VAR_LITTLEROOT_TOWN_STATE.
+Route101_EventScript_SkipRivalMeeting::
+	setflag FLAG_SKIPPED_RIVAL_INTRO
+	setvar VAR_LITTLEROOT_RIVAL_STATE, 3
+	setflag FLAG_HIDE_LITTLEROOT_TOWN_MAYS_HOUSE_2F_POKE_BALL
+	setflag FLAG_HIDE_LITTLEROOT_TOWN_BRENDANS_HOUSE_2F_POKE_BALL
+	return
 
 Route101_EventScript_HideMayInBedroom::
 	setflag FLAG_HIDE_LITTLEROOT_TOWN_MAYS_HOUSE_RIVAL_BEDROOM

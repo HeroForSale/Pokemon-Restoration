@@ -34,7 +34,8 @@ Route103_EventScript_RivalMay::
 	waitmovement 0
 	applymovement LOCALID_ROUTE103_RIVAL, Common_Movement_Delay48
 	waitmovement 0
-	msgbox Route103_Text_MayLetsBattle, MSGBOX_DEFAULT
+	call_if_unset FLAG_SKIPPED_RIVAL_INTRO, Route103_EventScript_MayLetsBattle
+	call_if_set FLAG_SKIPPED_RIVAL_INTRO, Route103_EventScript_MayLetsBattleNewNeighbor
 	switch VAR_STARTER_MON
 	case 0, Route103_EventScript_StartMayBattleTreecko
 	case 1, Route103_EventScript_StartMayBattleTorchic
@@ -51,7 +52,8 @@ Route103_EventScript_RivalBrendan::
 	waitmovement 0
 	applymovement LOCALID_ROUTE103_RIVAL, Common_Movement_Delay48
 	waitmovement 0
-	msgbox Route103_Text_BrendanLetsBattle, MSGBOX_DEFAULT
+	call_if_unset FLAG_SKIPPED_RIVAL_INTRO, Route103_EventScript_BrendanLetsBattle
+	call_if_set FLAG_SKIPPED_RIVAL_INTRO, Route103_EventScript_BrendanLetsBattleNewNeighbor
 	switch VAR_STARTER_MON
 	case 0, Route103_EventScript_StartBrendanBattleTreecko
 	case 1, Route103_EventScript_StartBrendanBattleTorchic
@@ -285,6 +287,45 @@ Route103_EventScript_Isabelle::
 	trainerbattle_single TRAINER_ISABELLE, Route103_Text_IsabelleIntro, Route103_Text_IsabelleDefeated
 	msgbox Route103_Text_IsabellePostBattle, MSGBOX_AUTOCLOSE
 	end
+
+Route103_EventScript_MayLetsBattle::
+	msgbox Route103_Text_MayLetsBattle, MSGBOX_DEFAULT
+	return
+
+Route103_EventScript_MayLetsBattleNewNeighbor::
+	msgbox Route103_Text_MayLetsBattleNewNeighbor, MSGBOX_DEFAULT
+	return
+
+Route103_EventScript_BrendanLetsBattle::
+	msgbox Route103_Text_BrendanLetsBattle, MSGBOX_DEFAULT
+	return
+
+Route103_EventScript_BrendanLetsBattleNewNeighbor::
+	msgbox Route103_Text_BrendanLetsBattleNewNeighbor, MSGBOX_DEFAULT
+	return
+
+Route103_Text_MayLetsBattleNewNeighbor:
+	.string "Oh! You must be {PLAYER}{KUN},\n"
+	.string "our new neighbor!\p"
+	.string "I'm MAY. My dad told me\n"
+	.string "all about you.\p"
+	.string "…And I see he gave you\n"
+	.string "a POKéMON as a gift.\p"
+	.string "Since we're here, let's have a quick\n"
+	.string "battle!\p"
+	.string "I'll give you a taste of what being\n"
+	.string "a TRAINER is like.$"
+
+Route103_Text_BrendanLetsBattleNewNeighbor:
+	.string "Hey, you're {PLAYER}, right?\n"
+	.string "The new kid next door?\p"
+	.string "I'm BRENDAN. My dad's been\n"
+	.string "talking about you.\p"
+	.string "…Oh, yeah, he gave you a POKéMON.\p"
+	.string "Since we're here, how about a little\n"
+	.string "battle?\p"
+	.string "I'll teach you what being a TRAINER's\n"
+	.string "about!$"
 
 Route103_Text_MayRoute103Pokemon:
 	.string "MAY: Let's see… The POKéMON found\n"

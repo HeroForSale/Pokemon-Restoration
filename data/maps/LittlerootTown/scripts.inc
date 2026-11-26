@@ -37,6 +37,7 @@ LittlerootTown_MapScripts::
 LittlerootTown_OnTransition:
 	setflag FLAG_VISITED_LITTLEROOT_TOWN
 	call Common_EventScript_SetupRivalGfxId
+	call_if_eq VAR_LITTLEROOT_TOWN_STATE, 0, LittlerootTown_EventScript_TrySkipRivalIntro
 	call_if_eq VAR_LITTLEROOT_INTRO_STATE, 2, LittlerootTown_EventScript_MoveMomToMaysDoor
 	call_if_unset FLAG_RESCUED_BIRCH, LittlerootTown_EventScript_SetTwinPos
 	call_if_eq VAR_LITTLEROOT_TOWN_STATE, 3, LittlerootTown_EventScript_SetMomStandingInFrontOfDoorPos
@@ -47,6 +48,16 @@ LittlerootTown_OnTransition:
 	call_if_eq VAR_DEX_UPGRADE_JOHTO_STARTER_STATE, 1, LittlerootTown_EventScript_HideMapNamePopup
 	call_if_eq VAR_DEX_UPGRADE_JOHTO_STARTER_STATE, 2, LittlerootTown_EventScript_LeftLabAfterDexUpgrade
 	end
+
+@ TESTING: the rival house visit is optional. Once Mom sends the player out,
+@ the twin lets them through to Route 101 as if they had met the rival.
+LittlerootTown_EventScript_TrySkipRivalIntro::
+	call_if_ge VAR_LITTLEROOT_INTRO_STATE, 7, LittlerootTown_EventScript_SkipRivalIntro
+	return
+
+LittlerootTown_EventScript_SkipRivalIntro::
+	setvar VAR_LITTLEROOT_TOWN_STATE, 1
+	return
 
 LittlerootTown_EventScript_LeftLabAfterDexUpgrade::
 	setvar VAR_DEX_UPGRADE_JOHTO_STARTER_STATE, 3
