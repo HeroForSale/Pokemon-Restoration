@@ -139,6 +139,12 @@ PlayersHouse_2F_Movement_MomExitsFemale:
 
 PlayersHouse_1F_EventScript_SetWatchedBroadcast::
 	setvar VAR_LITTLEROOT_INTRO_STATE, 7
+	@ TESTING ONLY: skip meeting the rival at home. Opens Route 101 right away;
+	@ the rival introduces themselves on Route 103 instead.
+	setvar VAR_LITTLEROOT_RIVAL_STATE, 3
+	setvar VAR_LITTLEROOT_TOWN_STATE, 1
+	setflag FLAG_HIDE_LITTLEROOT_TOWN_MAYS_HOUSE_2F_POKE_BALL
+	setflag FLAG_HIDE_LITTLEROOT_TOWN_BRENDANS_HOUSE_2F_POKE_BALL
 	releaseall
 	end
 
