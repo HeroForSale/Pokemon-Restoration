@@ -97,7 +97,7 @@
 #define VAR_POKELOT_RND1                                 0x404B // Unused if OW_USE_DAILY_SEED_FOR_VANILLA_VARIABLES is TRUE
 #define VAR_POKELOT_RND2                                 0x404C // Unused if OW_USE_DAILY_SEED_FOR_VANILLA_VARIABLES is TRUE
 #define VAR_POKELOT_PRIZE_PLACE                          0x404D
-#define VAR_UNUSED_0x404E                                0x404E // Unused Var
+#define VAR_STARTER_GEN                                  0x404E // Which trio is in Birch's bag, see STARTER_GEN_* below
 #define VAR_LOTAD_SIZE_RECORD                            0x404F
 #define VAR_LITTLEROOT_TOWN_STATE                        0x4050
 #define VAR_OLDALE_TOWN_STATE                            0x4051
@@ -150,7 +150,7 @@
 #define VAR_ROUTE133_STATE                               0x4080 // Unused Var
 #define VAR_ROUTE134_STATE                               0x4081 // Unused Var
 #define VAR_LITTLEROOT_HOUSES_STATE_MAY                  0x4082
-#define VAR_UNUSED_0x4083                                0x4083 // Unused Var
+#define VAR_STARTER_TEST_1                               0x4083 // TEST starter menu: species in the left ball
 #define VAR_BIRCH_LAB_STATE                              0x4084
 #define VAR_PETALBURG_GYM_STATE                          0x4085 // 0-1: Wally tutorial, 2-6: 0-4 badges, 7: Defeated Norman, 8: Rematch Norman
 #define VAR_CONTEST_HALL_STATE                           0x4086
@@ -158,13 +158,13 @@
 #define VAR_CONTEST_TYPE                                 0x4088
 #define VAR_SECRET_BASE_INITIALIZED                      0x4089
 #define VAR_CONTEST_PRIZE_PICKUP                         0x408A
-#define VAR_UNUSED_0x408B                                0x408B // Unused Var
+#define VAR_STARTER_TEST_2                               0x408B // TEST starter menu: species in the middle ball
 #define VAR_LITTLEROOT_HOUSES_STATE_BRENDAN              0x408C
 #define VAR_LITTLEROOT_RIVAL_STATE                       0x408D
 #define VAR_BOARD_BRINEY_BOAT_STATE                      0x408E
 #define VAR_DEVON_CORP_3F_STATE                          0x408F
 #define VAR_BRINEY_HOUSE_STATE                           0x4090
-#define VAR_UNUSED_0x4091                                0x4091 // Unused Var
+#define VAR_STARTER_TEST_3                               0x4091 // TEST starter menu: species in the right ball
 #define VAR_LITTLEROOT_INTRO_STATE                       0x4092
 #define VAR_MAUVILLE_GYM_STATE                           0x4093
 #define VAR_LILYCOVE_MUSEUM_2F_STATE                     0x4094
@@ -337,5 +337,20 @@
 #define TESTING_VAR_UNUSED_6                (TESTING_VARS_START + 0x6)
 #define TESTING_VAR_UNUSED_7                (TESTING_VARS_START + 0x7)
 #endif // TESTING
+
+// Values for VAR_STARTER_GEN. 0 means Gen 3 so saves made before the gen menu keep Treecko/Torchic/Mudkip.
+// VAR_STARTER_MON still holds the ball slot (0 grass, 1 fire, 2 water), which is what the rival keys off.
+#define STARTER_GEN_DEFAULT 0
+#define STARTER_GEN_1       1
+#define STARTER_GEN_2       2
+#define STARTER_GEN_3       3
+#define STARTER_GEN_4       4
+#define STARTER_GEN_5       5
+#define STARTER_GEN_6       6
+#define STARTER_GEN_7       7
+#define STARTER_GEN_8       8
+#define STARTER_GEN_9       9
+#define STARTER_GEN_COUNT   10
+#define STARTER_GEN_TEST    10 // uses VAR_STARTER_TEST_1-3
 
 #endif // GUARD_CONSTANTS_VARS_H

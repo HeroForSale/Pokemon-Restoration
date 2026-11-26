@@ -87,4 +87,7 @@
 // Naming Screen
 #define AUTO_LOWERCASE_KEYBOARD      GEN_LATEST  // Starting in GEN_6, after entering the first uppercase character, the keyboard switches to lowercase letters.
 
+// Starters
+#define STARTER_TEST_MENU            DISABLED_ON_RELEASE // Adds a TEST entry to the top of the gen menu at Birch's bag, to put 3 reworked mons in the bag. Hidden in `make release`.
+
 #endif // GUARD_CONFIG_GENERAL_H

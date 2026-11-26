@@ -121,6 +121,28 @@ static const u16 sStarterMon[STARTER_MON_COUNT] =
     WATER_STARTER,
 };
 
+// One grass/fire/water trio per generation, picked from the menu at Birch's bag (VAR_STARTER_GEN).
+// Index 0 (STARTER_GEN_DEFAULT) is unused here: it falls back to sStarterMon.
+static const u16 sStarterMonByGen[STARTER_GEN_COUNT][STARTER_MON_COUNT] =
+{
+    [STARTER_GEN_1] = {SPECIES_BULBASAUR,  SPECIES_CHARMANDER, SPECIES_SQUIRTLE},
+    [STARTER_GEN_2] = {SPECIES_CHIKORITA,  SPECIES_CYNDAQUIL,  SPECIES_TOTODILE},
+    [STARTER_GEN_3] = {SPECIES_TREECKO,    SPECIES_TORCHIC,    SPECIES_MUDKIP},
+    [STARTER_GEN_4] = {SPECIES_TURTWIG,    SPECIES_CHIMCHAR,   SPECIES_PIPLUP},
+    [STARTER_GEN_5] = {SPECIES_SNIVY,      SPECIES_TEPIG,      SPECIES_OSHAWOTT},
+    [STARTER_GEN_6] = {SPECIES_CHESPIN,    SPECIES_FENNEKIN,   SPECIES_FROAKIE},
+    [STARTER_GEN_7] = {SPECIES_ROWLET,     SPECIES_LITTEN,     SPECIES_POPPLIO},
+    [STARTER_GEN_8] = {SPECIES_GROOKEY,    SPECIES_SCORBUNNY,  SPECIES_SOBBLE},
+    [STARTER_GEN_9] = {SPECIES_SPRIGATITO, SPECIES_FUECOCO,    SPECIES_QUAXLY},
+};
+
+static const u16 sStarterTestVars[STARTER_MON_COUNT] =
+{
+    VAR_STARTER_TEST_1,
+    VAR_STARTER_TEST_2,
+    VAR_STARTER_TEST_3,
+};
+
 static const struct BgTemplate sBgTemplates[3] =
 {
     {
@@ -349,8 +371,21 @@ static const struct SpriteTemplate sSpriteTemplate_StarterCircle =
 // .text
 u16 GetStarterPokemon(u16 chosenStarterId)
 {
-    if (chosenStarterId > STARTER_MON_COUNT)
+    u16 gen = VarGet(VAR_STARTER_GEN);
+
+    if (chosenStarterId >= STARTER_MON_COUNT)
         chosenStarterId = 0;
+    if (IS_FRLG)
+        return sStarterMon[chosenStarterId];
+    if (gen == STARTER_GEN_TEST)
+    {
+        u16 species = VarGet(sStarterTestVars[chosenStarterId]);
+        if (species != SPECIES_NONE && species < NUM_SPECIES)
+            return species;
+        return sStarterMon[chosenStarterId];
+    }
+    if (gen > STARTER_GEN_DEFAULT && gen < STARTER_GEN_COUNT)
+        return sStarterMonByGen[gen][chosenStarterId];
     return sStarterMon[chosenStarterId];
 }
 
