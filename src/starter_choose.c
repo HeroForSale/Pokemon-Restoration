@@ -136,13 +136,6 @@ static const u16 sStarterMonByGen[STARTER_GEN_COUNT][STARTER_MON_COUNT] =
     [STARTER_GEN_9] = {SPECIES_SPRIGATITO, SPECIES_FUECOCO,    SPECIES_QUAXLY},
 };
 
-static const u16 sStarterTestVars[STARTER_MON_COUNT] =
-{
-    VAR_STARTER_TEST_1,
-    VAR_STARTER_TEST_2,
-    VAR_STARTER_TEST_3,
-};
-
 static const struct BgTemplate sBgTemplates[3] =
 {
     {
@@ -377,13 +370,6 @@ u16 GetStarterPokemon(u16 chosenStarterId)
         chosenStarterId = 0;
     if (IS_FRLG)
         return sStarterMon[chosenStarterId];
-    if (gen == STARTER_GEN_TEST)
-    {
-        u16 species = VarGet(sStarterTestVars[chosenStarterId]);
-        if (species != SPECIES_NONE && species < NUM_SPECIES)
-            return species;
-        return sStarterMon[chosenStarterId];
-    }
     if (gen > STARTER_GEN_DEFAULT && gen < STARTER_GEN_COUNT)
         return sStarterMonByGen[gen][chosenStarterId];
     return sStarterMon[chosenStarterId];

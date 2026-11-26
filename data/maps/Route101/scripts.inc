@@ -203,15 +203,11 @@ Route101_Movement_Unused2:
 	walk_up
 	step_end
 
-
 @ Gen menu at Birch's bag: picks which trio goes in the 3 balls (VAR_STARTER_GEN).
 @ VAR_STARTER_MON still stores the ball slot, so the rival keeps using Gen 3 counters.
 Route101_EventScript_ChooseStarterGen::
 	message Route101_Text_WhichStartersInBag
 	waitmessage
-.if STARTER_TEST_MENU == TRUE
-	dynmultipush Route101_Text_GenTest, STARTER_GEN_TEST
-.endif
 	dynmultipush Route101_Text_GenKanto, STARTER_GEN_1
 	dynmultipush Route101_Text_GenJohto, STARTER_GEN_2
 	dynmultipush Route101_Text_GenHoenn, STARTER_GEN_3
@@ -224,55 +220,7 @@ Route101_EventScript_ChooseStarterGen::
 	dynmultistack 0, 0, TRUE, 6, FALSE, STARTER_GEN_3, DYN_MULTICHOICE_CB_NONE
 	copyvar VAR_STARTER_GEN, VAR_RESULT
 	closemessage
-.if STARTER_TEST_MENU == TRUE
-	goto_if_eq VAR_STARTER_GEN, STARTER_GEN_TEST, Route101_EventScript_ChooseTestStarters
-.endif
 	return
-
-.if STARTER_TEST_MENU == TRUE
-@ TEST: pick 3 reworked mons for the left, middle and right balls.
-@ To add a mon, add a dynmultipush line (and its name text) in Route101_EventScript_PushTestStarters.
-Route101_EventScript_ChooseTestStarters::
-	message Route101_Text_PickTestLeft
-	waitmessage
-	call Route101_EventScript_PushTestStarters
-	copyvar VAR_STARTER_TEST_1, VAR_RESULT
-	message Route101_Text_PickTestMiddle
-	waitmessage
-	call Route101_EventScript_PushTestStarters
-	copyvar VAR_STARTER_TEST_2, VAR_RESULT
-	message Route101_Text_PickTestRight
-	waitmessage
-	call Route101_EventScript_PushTestStarters
-	copyvar VAR_STARTER_TEST_3, VAR_RESULT
-	closemessage
-	return
-
-Route101_EventScript_PushTestStarters::
-	dynmultipush Route101_Text_TestCranidos, SPECIES_CRANIDOS
-	dynmultipush Route101_Text_TestRampardos, SPECIES_RAMPARDOS
-	dynmultipush Route101_Text_TestOmanyte, SPECIES_OMANYTE
-	dynmultipush Route101_Text_TestOmastar, SPECIES_OMASTAR
-	dynmultipush Route101_Text_TestKabuto, SPECIES_KABUTO
-	dynmultipush Route101_Text_TestKabutops, SPECIES_KABUTOPS
-	dynmultipush Route101_Text_TestLileep, SPECIES_LILEEP
-	dynmultipush Route101_Text_TestCradily, SPECIES_CRADILY
-	dynmultipush Route101_Text_TestAnorith, SPECIES_ANORITH
-	dynmultipush Route101_Text_TestArmaldo, SPECIES_ARMALDO
-	dynmultipush Route101_Text_TestShieldon, SPECIES_SHIELDON
-	dynmultipush Route101_Text_TestBastiodon, SPECIES_BASTIODON
-	dynmultipush Route101_Text_TestTirtouga, SPECIES_TIRTOUGA
-	dynmultipush Route101_Text_TestCarracosta, SPECIES_CARRACOSTA
-	dynmultipush Route101_Text_TestTyrunt, SPECIES_TYRUNT
-	dynmultipush Route101_Text_TestTyrantrum, SPECIES_TYRANTRUM
-	dynmultipush Route101_Text_TestAmaura, SPECIES_AMAURA
-	dynmultipush Route101_Text_TestAurorus, SPECIES_AURORUS
-	dynmultipush Route101_Text_TestBlitzle, SPECIES_BLITZLE
-	dynmultipush Route101_Text_TestZebstrika, SPECIES_ZEBSTRIKA
-	dynmultipush Route101_Text_TestAlolanRaichu, SPECIES_RAICHU_ALOLA
-	dynmultistack 0, 0, TRUE, 6, FALSE, 0, DYN_MULTICHOICE_CB_NONE
-	return
-.endif
 
 Route101_EventScript_Youngster::
 	msgbox Route101_Text_TakeTiredPokemonToPokeCenter, MSGBOX_NPC
@@ -399,79 +347,3 @@ Route101_Text_GenGalar:
 Route101_Text_GenPaldea:
 	.string "Paldea (Gen 9)$"
 
-.if STARTER_TEST_MENU == TRUE
-Route101_Text_GenTest:
-	.string "TEST$"
-
-Route101_Text_PickTestLeft:
-	.string "TEST: POKéMON for the left ball?$"
-
-Route101_Text_PickTestMiddle:
-	.string "TEST: POKéMON for the middle ball?$"
-
-Route101_Text_PickTestRight:
-	.string "TEST: POKéMON for the right ball?$"
-
-Route101_Text_TestCranidos:
-	.string "Cranidos$"
-
-Route101_Text_TestRampardos:
-	.string "Rampardos$"
-
-Route101_Text_TestOmanyte:
-	.string "Omanyte$"
-
-Route101_Text_TestOmastar:
-	.string "Omastar$"
-
-Route101_Text_TestKabuto:
-	.string "Kabuto$"
-
-Route101_Text_TestKabutops:
-	.string "Kabutops$"
-
-Route101_Text_TestLileep:
-	.string "Lileep$"
-
-Route101_Text_TestCradily:
-	.string "Cradily$"
-
-Route101_Text_TestAnorith:
-	.string "Anorith$"
-
-Route101_Text_TestArmaldo:
-	.string "Armaldo$"
-
-Route101_Text_TestShieldon:
-	.string "Shieldon$"
-
-Route101_Text_TestBastiodon:
-	.string "Bastiodon$"
-
-Route101_Text_TestTirtouga:
-	.string "Tirtouga$"
-
-Route101_Text_TestCarracosta:
-	.string "Carracosta$"
-
-Route101_Text_TestTyrunt:
-	.string "Tyrunt$"
-
-Route101_Text_TestTyrantrum:
-	.string "Tyrantrum$"
-
-Route101_Text_TestAmaura:
-	.string "Amaura$"
-
-Route101_Text_TestAurorus:
-	.string "Aurorus$"
-
-Route101_Text_TestBlitzle:
-	.string "Blitzle$"
-
-Route101_Text_TestZebstrika:
-	.string "Zebstrika$"
-
-Route101_Text_TestAlolanRaichu:
-	.string "Alolan Raichu$"
-.endif
