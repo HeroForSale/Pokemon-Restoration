@@ -203,6 +203,25 @@ Route101_Movement_Unused2:
 	walk_up
 	step_end
 
+@ Gen menu at Birch's bag: picks which trio goes in the 3 balls (VAR_STARTER_GEN).
+@ VAR_STARTER_MON still stores the ball slot, so the rival keeps using Gen 3 counters.
+Route101_EventScript_ChooseStarterGen::
+	message Route101_Text_WhichStartersInBag
+	waitmessage
+	dynmultipush Route101_Text_GenKanto, STARTER_GEN_1
+	dynmultipush Route101_Text_GenJohto, STARTER_GEN_2
+	dynmultipush Route101_Text_GenHoenn, STARTER_GEN_3
+	dynmultipush Route101_Text_GenSinnoh, STARTER_GEN_4
+	dynmultipush Route101_Text_GenUnova, STARTER_GEN_5
+	dynmultipush Route101_Text_GenKalos, STARTER_GEN_6
+	dynmultipush Route101_Text_GenAlola, STARTER_GEN_7
+	dynmultipush Route101_Text_GenGalar, STARTER_GEN_8
+	dynmultipush Route101_Text_GenPaldea, STARTER_GEN_9
+	dynmultistack 0, 0, TRUE, 6, FALSE, STARTER_GEN_3, DYN_MULTICHOICE_CB_NONE
+	copyvar VAR_STARTER_GEN, VAR_RESULT
+	closemessage
+	return
+
 Route101_EventScript_Youngster::
 	msgbox Route101_Text_TakeTiredPokemonToPokeCenter, MSGBOX_NPC
 	end
@@ -218,6 +237,7 @@ Route101_EventScript_RouteSign::
 Route101_EventScript_BirchsBag::
 	lock
 	faceplayer
+	call Route101_EventScript_ChooseStarterGen
 	setflag FLAG_SYS_POKEMON_GET
 	setflag FLAG_RESCUED_BIRCH
 	fadescreen FADE_TO_BLACK
@@ -295,4 +315,35 @@ Route101_Text_WildPokemonInTallGrass:
 Route101_Text_RouteSign:
 	.string "ROUTE 101\n"
 	.string "{UP_ARROW} OLDALE TOWN$"
+
+Route101_Text_WhichStartersInBag:
+	.string "PROF. BIRCH's bag has POKé BALLS\n"
+	.string "from all over. Which ones?$"
+
+Route101_Text_GenKanto:
+	.string "Kanto (Gen 1)$"
+
+Route101_Text_GenJohto:
+	.string "Johto (Gen 2)$"
+
+Route101_Text_GenHoenn:
+	.string "Hoenn (Gen 3)$"
+
+Route101_Text_GenSinnoh:
+	.string "Sinnoh (Gen 4)$"
+
+Route101_Text_GenUnova:
+	.string "Unova (Gen 5)$"
+
+Route101_Text_GenKalos:
+	.string "Kalos (Gen 6)$"
+
+Route101_Text_GenAlola:
+	.string "Alola (Gen 7)$"
+
+Route101_Text_GenGalar:
+	.string "Galar (Gen 8)$"
+
+Route101_Text_GenPaldea:
+	.string "Paldea (Gen 9)$"
 

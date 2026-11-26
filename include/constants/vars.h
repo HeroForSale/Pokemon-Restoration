@@ -97,7 +97,7 @@
 #define VAR_POKELOT_RND1                                 0x404B // Unused if OW_USE_DAILY_SEED_FOR_VANILLA_VARIABLES is TRUE
 #define VAR_POKELOT_RND2                                 0x404C // Unused if OW_USE_DAILY_SEED_FOR_VANILLA_VARIABLES is TRUE
 #define VAR_POKELOT_PRIZE_PLACE                          0x404D
-#define VAR_UNUSED_0x404E                                0x404E // Unused Var
+#define VAR_STARTER_GEN                                  0x404E // Which trio is in Birch's bag, see STARTER_GEN_* below
 #define VAR_LOTAD_SIZE_RECORD                            0x404F
 #define VAR_LITTLEROOT_TOWN_STATE                        0x4050
 #define VAR_OLDALE_TOWN_STATE                            0x4051
@@ -337,5 +337,19 @@
 #define TESTING_VAR_UNUSED_6                (TESTING_VARS_START + 0x6)
 #define TESTING_VAR_UNUSED_7                (TESTING_VARS_START + 0x7)
 #endif // TESTING
+
+// Values for VAR_STARTER_GEN. 0 means Gen 3 so saves made before the gen menu keep Treecko/Torchic/Mudkip.
+// VAR_STARTER_MON still holds the ball slot (0 grass, 1 fire, 2 water), which is what the rival keys off.
+#define STARTER_GEN_DEFAULT 0
+#define STARTER_GEN_1       1
+#define STARTER_GEN_2       2
+#define STARTER_GEN_3       3
+#define STARTER_GEN_4       4
+#define STARTER_GEN_5       5
+#define STARTER_GEN_6       6
+#define STARTER_GEN_7       7
+#define STARTER_GEN_8       8
+#define STARTER_GEN_9       9
+#define STARTER_GEN_COUNT   10
 
 #endif // GUARD_CONSTANTS_VARS_H
