@@ -669,11 +669,11 @@ static const struct WindowTemplate sPageSkillsTemplate[] =
     [PSS_DATA_WINDOW_SKILLS_FOOTER] = {
         .bg = 0,
         .tilemapLeft = 10,
-        .tilemapTop = 15,
+        .tilemapTop = 14,
         .width = 20,
         .height = 3,
         .paletteNum = 6,
-        .baseBlock = 687,
+        .baseBlock = 667,
     },
     [PSS_DATA_WINDOW_SKILLS_RIBBON_COUNT] = {
         .bg = 0,
@@ -689,7 +689,7 @@ static const struct WindowTemplate sPageSkillsTemplate[] =
         .tilemapLeft = 10,
         .tilemapTop = 4,
         .width = 20,
-        .height = 11,
+        .height = 10,
         .paletteNum = 6,
         .baseBlock = 467,
     },
@@ -2042,8 +2042,10 @@ static void EndEvEdit(u8 taskId)
 }
 
 // Table layout (pixels inside the table window, FONT_SMALL, 12px rows)
-#define TABLE_ROW_HEIGHT   12
-#define TABLE_Y            2
+#define TABLE_ROW_HEIGHT   11
+#define TABLE_Y            1
+#define FOOTER_Y           4
+#define FOOTER_ROW_HEIGHT  12
 #define TABLE_NAME_X       6
 #define TABLE_STAT_RIGHT   94
 #define TABLE_BASE_RIGHT   124
@@ -2164,17 +2166,17 @@ static void PrintSkillsFooter(void)
         itemText = gStringVar1;
     }
 
-    PrintTextOnWindowWithFont(windowId, COMPOUND_STRING("ITEM"), TABLE_NAME_X, 0, 0, 0, FONT_SMALL);
+    PrintTextOnWindowWithFont(windowId, COMPOUND_STRING("ITEM"), TABLE_NAME_X, FOOTER_Y, 0, 0, FONT_SMALL);
     fontId = GetFontIdToFit(itemText, FONT_SMALL, 0, TABLE_EV_RIGHT - 40);
-    PrintTextOnWindowWithFont(windowId, itemText, TABLE_EV_RIGHT - GetStringWidth(fontId, itemText, 0), 0, 0, 0, fontId);
+    PrintTextOnWindowWithFont(windowId, itemText, TABLE_EV_RIGHT - GetStringWidth(fontId, itemText, 0), FOOTER_Y, 0, 0, fontId);
 
     if (sum->level < MAX_LEVEL)
         expToNextLevel = gExperienceTables[gSpeciesInfo[sum->species].growthRate][sum->level + 1] - sum->exp;
     else
         expToNextLevel = 0;
-    PrintTextOnWindowWithFont(windowId, COMPOUND_STRING("NEXT LV."), TABLE_NAME_X, TABLE_ROW_HEIGHT, 0, 0, FONT_SMALL);
+    PrintTextOnWindowWithFont(windowId, COMPOUND_STRING("NEXT LV."), TABLE_NAME_X, FOOTER_Y + FOOTER_ROW_HEIGHT, 0, 0, FONT_SMALL);
     ConvertIntToDecimalStringN(gStringVar1, expToNextLevel, STR_CONV_MODE_LEFT_ALIGN, 7);
-    PrintTableTextRight(windowId, gStringVar1, TABLE_EV_RIGHT, TABLE_ROW_HEIGHT);
+    PrintTableTextRight(windowId, gStringVar1, TABLE_EV_RIGHT, FOOTER_Y + FOOTER_ROW_HEIGHT);
 }
 
 static void Task_HandleEvEditInput(u8 taskId)
