@@ -125,6 +125,9 @@ enum
 #define TILE_FILLED_JAM_HEART    0x103C
 #define TILE_EMPTY_JAM_HEART     0x103D
 
+#define SKILLS_NAME_COLUMN_PAL 10
+static const u16 sSkillsNameColumnGreen = RGB(17, 27, 15);
+
 static EWRAM_DATA struct PokemonSummaryScreenData
 {
     /*0x00*/ union {
@@ -1477,6 +1480,10 @@ static bool8 DecompressGraphics(void)
         break;
     case 6:
         LoadPalette(gSummaryScreen_Pal, BG_PLTT_ID(0), 8 * PLTT_SIZE_4BPP);
+        // Pokémon Restoration: Skills page name column uses a copy of BG palette 2 in slot 10,
+        // with its yellow-green fill swapped for a true green. Nothing else uses slot 10.
+        LoadPalette(&gSummaryScreen_Pal[2 * 16], BG_PLTT_ID(SKILLS_NAME_COLUMN_PAL), PLTT_SIZE_4BPP);
+        LoadPalette(&sSkillsNameColumnGreen, BG_PLTT_ID(SKILLS_NAME_COLUMN_PAL) + 12, PLTT_SIZEOF(1));
         LoadPalette(&gPPTextPalette, BG_PLTT_ID(8) + 1, PLTT_SIZEOF(16 - 1));
         sMonSummaryScreen->switchCounter++;
         break;
@@ -2070,12 +2077,12 @@ static void DrawTableGrid(u8 windowId, u32 height, u32 firstRowY, u32 rowHeight,
     u32 width = 160;
 
     // Vertical divider between name and number columns
-    FillWindowPixelRect(windowId, PIXEL_FILL(GRID_DARK), GRID_DIVIDER_X, 2, 1, height - 4);
+    FillWindowPixelRect(windowId, PIXEL_FILL(GRID_DARK), GRID_DIVIDER_X, 2, 1, height - 3);
     // Dividers between the number columns (stat table only)
     if (headerLine)
     {
-        FillWindowPixelRect(windowId, PIXEL_FILL(GRID_DARK), GRID_COL1_X, 2, 1, height - 4);
-        FillWindowPixelRect(windowId, PIXEL_FILL(GRID_DARK), GRID_COL2_X, 2, 1, height - 4);
+        FillWindowPixelRect(windowId, PIXEL_FILL(GRID_DARK), GRID_COL1_X, 2, 1, height - 3);
+        FillWindowPixelRect(windowId, PIXEL_FILL(GRID_DARK), GRID_COL2_X, 2, 1, height - 3);
     }
     // Lines between rows
     for (u32 i = 1; i < rows; i++)
