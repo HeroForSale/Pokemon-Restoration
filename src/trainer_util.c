@@ -150,10 +150,28 @@ void GenerateMonFromTrainerMon(struct Pokemon *mon, const struct TrainerMon *tra
     }
     else if (IsManualEvMode())
     {
-        // Pokémon Restoration: trainers keep pace with hand-set player EVs.
-        u32 ev = P_MANUAL_MODE_TRAINER_EVS;
+        // Pokémon Restoration: in Manual mode, trainer mons with no EVs in trainers.party
+        // get a "they tried" spread: the better attacking stat and the best defensive stat
+        // (by base stats) get P_MANUAL_MODE_TRAINER_MAIN_EVS each, every other stat gets
+        // P_MANUAL_MODE_TRAINER_REST_EVS. Ties go to Atk, then HP, then Def.
+        const struct SpeciesInfo *info = &gSpeciesInfo[trainerMon->species];
+        u32 attackStat = (info->baseSpAttack > info->baseAttack) ? STAT_SPATK : STAT_ATK;
+        u32 defenseStat = STAT_HP;
+        u32 bestDefense = info->baseHP;
+
+        if (info->baseDefense > bestDefense)
+        {
+            defenseStat = STAT_DEF;
+            bestDefense = info->baseDefense;
+        }
+        if (info->baseSpDefense > bestDefense)
+            defenseStat = STAT_SPDEF;
+
         for (u32 i = 0; i < NUM_STATS; i++)
+        {
+            u32 ev = (i == attackStat || i == defenseStat) ? P_MANUAL_MODE_TRAINER_MAIN_EVS : P_MANUAL_MODE_TRAINER_REST_EVS;
             SetMonData(mon, MON_DATA_HP_EV + i, &ev);
+        }
     }
 
     SetMonData(mon, MON_DATA_IVS, &trainerMon->iv);
