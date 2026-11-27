@@ -1372,6 +1372,39 @@ static u16 CalculateBoxMonChecksumReencrypt(struct BoxPokemon *boxMon)
     return checksum;
 }
 
+bool32 IsMinimalGrindingMode(void)
+{
+    return P_EV_MODE_OPTION && !TESTING && gSaveBlock2Ptr->optionsEvMode == OPTIONS_EV_MODE_MINIMAL;
+}
+
+bool32 IsManualEvMode(void)
+{
+    return P_EV_MODE_OPTION && !TESTING && gSaveBlock2Ptr->optionsEvMode == OPTIONS_EV_MODE_MANUAL;
+}
+
+// The EV value the stat formula actually uses for this mon.
+u32 GetMonStatEV(struct Pokemon *mon, u32 stat)
+{
+    if (IsMinimalGrindingMode())
+        return P_MINIMAL_GRINDING_EVS;
+    return GetMonData(mon, MON_DATA_HP_EV + stat);
+}
+
+// Party stats are stored, so recalculate them after a save loads or the EV mode changes.
+void RecalculatePlayerPartyStats(void)
+{
+    u32 count = gPartiesCount[B_TRAINER_PLAYER];
+
+    if (count > PARTY_SIZE)
+        count = PARTY_SIZE;
+    for (u32 i = 0; i < count; i++)
+    {
+        struct Pokemon *mon = &gParties[B_TRAINER_PLAYER][i];
+        if (GetMonData(mon, MON_DATA_SANITY_HAS_SPECIES) && !GetMonData(mon, MON_DATA_IS_EGG))
+            CalculateMonStats(mon);
+    }
+}
+
 void CalculateMonStats(struct Pokemon *mon)
 {
     CalculateMonStatsCont(mon, TRUE);
@@ -1397,7 +1430,7 @@ void CalculateMonStatsCont(struct Pokemon *mon, bool32 updateSpeedStat)
     {
         hyperTrained[i] = GetMonData(mon, MON_DATA_HYPER_TRAINED_HP + i);
         iv[i] = GetMonData(mon, MON_DATA_HP_IV + i);
-        ev[i] = GetMonData(mon, MON_DATA_HP_EV + i);
+        ev[i] = GetMonStatEV(mon, i);
 
         if (hyperTrained[i])
         {
@@ -2033,6 +2066,19 @@ u32 GetBoxMonData3(struct BoxPokemon *boxMon, s32 field, u8 *data)
 {
     s32 i;
     u32 retVal = 0;
+
+#if P_PERFECT_IVS && !TESTING
+    // Pokémon Restoration: every mon has perfect IVs, whatever is stored.
+    if (field >= MON_DATA_HP_IV && field <= MON_DATA_SPDEF_IV)
+        return MAX_PER_STAT_IVS;
+    if (field == MON_DATA_IVS)
+        return MAX_PER_STAT_IVS
+             | (MAX_PER_STAT_IVS << 5)
+             | (MAX_PER_STAT_IVS << 10)
+             | (MAX_PER_STAT_IVS << 15)
+             | (MAX_PER_STAT_IVS << 20)
+             | (MAX_PER_STAT_IVS << 25);
+#endif
 
     // Any field greater than MON_DATA_ENCRYPT_SEPARATOR is encrypted and must be treated as such
     if (field > MON_DATA_ENCRYPT_SEPARATOR)
@@ -4920,6 +4966,10 @@ void MonGainEVs(struct Pokemon *mon, enum Species defeatedSpecies)
     u8 stat;
     u8 bonus;
     u32 currentEVCap = GetCurrentEVCap();
+
+    // Pokémon Restoration: battles give no EVs in either EV mode.
+    if (P_EV_MODE_OPTION && !TESTING)
+        return;
 
     heldItem = GetMonData(mon, MON_DATA_HELD_ITEM, 0);
     holdEffect = GetItemHoldEffect(heldItem);

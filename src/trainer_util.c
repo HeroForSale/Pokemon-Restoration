@@ -2,6 +2,7 @@
 #include "main.h"
 #include "data.h"
 #include "move.h"
+#include "pokemon.h"
 #include "random.h"
 #include "string_util.h"
 #include "trainer_util.h"
@@ -146,6 +147,13 @@ void GenerateMonFromTrainerMon(struct Pokemon *mon, const struct TrainerMon *tra
         SetMonData(mon, MON_DATA_SPATK_EV, &trainerMon->ev[3]);
         SetMonData(mon, MON_DATA_SPDEF_EV, &trainerMon->ev[4]);
         SetMonData(mon, MON_DATA_SPEED_EV, &trainerMon->ev[5]);
+    }
+    else if (IsManualEvMode())
+    {
+        // Pokémon Restoration: trainers keep pace with hand-set player EVs.
+        u32 ev = P_MANUAL_MODE_TRAINER_EVS;
+        for (u32 i = 0; i < NUM_STATS; i++)
+            SetMonData(mon, MON_DATA_HP_EV + i, &ev);
     }
 
     SetMonData(mon, MON_DATA_IVS, &trainerMon->iv);
