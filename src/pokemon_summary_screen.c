@@ -1949,10 +1949,11 @@ void ExtractMonSkillEvData(struct Pokemon *mon, struct PokeSummary *sum)
 // ---------------------------------------------------------------------------
 // Pokémon Restoration: EV editor (Manual EV mode)
 // Skills page: A shows EVs, A again starts editing.
-// Up/Down pick a stat, Right/Left +4/-4 (hold to repeat), R max, L zero.
+// Up/Down pick a stat, Right/Left +4/-4, R/L +64/-64 (hold to repeat).
 // A, B or START finishes and shows the recalculated stats.
 // ---------------------------------------------------------------------------
 #define EV_EDIT_STEP 4
+#define EV_EDIT_BIG_STEP 64
 
 static const u8 sEvEditStatOrder[NUM_STATS] =
 {
@@ -2265,16 +2266,14 @@ static void Task_HandleEvEditInput(u8 taskId)
         if (ChangeSummaryMonEv(-EV_EDIT_STEP))
             RedrawEvEdit(taskId);
     }
-    else if (JOY_NEW(R_BUTTON))
+    else if (JOY_REPEAT(R_BUTTON))
     {
-        PlaySE(SE_SELECT);
-        if (ChangeSummaryMonEv(MAX_PER_STAT_EVS))
+        if (ChangeSummaryMonEv(EV_EDIT_BIG_STEP))
             RedrawEvEdit(taskId);
     }
-    else if (JOY_NEW(L_BUTTON))
+    else if (JOY_REPEAT(L_BUTTON))
     {
-        PlaySE(SE_SELECT);
-        if (ChangeSummaryMonEv(-MAX_PER_STAT_EVS))
+        if (ChangeSummaryMonEv(-EV_EDIT_BIG_STEP))
             RedrawEvEdit(taskId);
     }
 }
