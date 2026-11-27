@@ -8,6 +8,7 @@
 #include "load_save.h"
 #include "overworld.h"
 #include "hall_of_fame.h"
+#include "pokemon.h"
 #include "pokemon_storage_system.h"
 #include "trainer_hill.h"
 #include "link.h"
@@ -893,6 +894,9 @@ u8 LoadGameSave(u8 saveType)
     default:
         status = TryLoadSaveSlot(FULL_SAVE_SLOT, gRamSaveSectorLocations);
         CopyPartyAndObjectsFromSave();
+        // Pokémon Restoration: stored party stats from older builds pick up perfect IVs and the EV mode.
+        if (status == SAVE_STATUS_OK)
+            RecalculatePlayerPartyStats();
         gSaveFileStatus = status;
         gGameContinueCallback = NULL;
         break;
