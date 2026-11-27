@@ -1,4 +1,4 @@
-// Pokémon Center service vendor (stands left of the counter in every Hoenn Pokémon Center).
+// Pokémon Center service vendor (stands behind the counter, right of Nurse Joy, in every Hoenn Pokémon Center).
 // Service 1: free nature change. Writes the mon's hidden nature, which is the nature the game
 // uses for stats, the summary screen, Synchronize, Everstone breeding and flavor likes, so the
 // personality value (shininess, gender, Unown/Spinda/Wurmple forms) is never touched.
@@ -29,7 +29,7 @@ void NatureVendor_BufferCurrentNature(void)
     StringCopy(gStringVar2, gNaturesInfo[nature].name);
 }
 
-// Pushes all 25 natures onto the dynmultichoice stack as "Adamant  +Atk -SpA", id = nature.
+// Pushes all 25 natures onto the dynmultichoice stack as "Rash (+SpA, -SpD)", id = nature.
 void NatureVendor_PushNatureOptions(void)
 {
     u32 i;
@@ -40,10 +40,11 @@ void NatureVendor_PushNatureOptions(void)
         u8 *end = StringCopy(name, gNaturesInfo[i].name);
         if (gNaturesInfo[i].statUp != gNaturesInfo[i].statDown)
         {
-            end = StringAppend(end, COMPOUND_STRING(" +"));
+            end = StringAppend(end, COMPOUND_STRING(" (+"));
             end = StringAppend(end, sStatAbbrevs[gNaturesInfo[i].statUp]);
-            end = StringAppend(end, COMPOUND_STRING(" -"));
-            StringAppend(end, sStatAbbrevs[gNaturesInfo[i].statDown]);
+            end = StringAppend(end, COMPOUND_STRING(", -"));
+            end = StringAppend(end, sStatAbbrevs[gNaturesInfo[i].statDown]);
+            StringAppend(end, COMPOUND_STRING(")"));
         }
         item.name = name;
         item.id = i;
