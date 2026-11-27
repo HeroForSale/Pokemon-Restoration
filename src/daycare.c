@@ -599,7 +599,7 @@ u32 GetChildNature(struct DayCare *daycare)
     if (slot == DAYCARE_MON_COUNT)
         return NATURE_RANDOM;
 
-    return GetNatureFromPersonality(GetBoxMonData(&daycare->mons[slot].mon, MON_DATA_PERSONALITY));
+    return GetBoxMonData(&daycare->mons[slot].mon, MON_DATA_HIDDEN_NATURE);
 }
 
 static void _TriggerPendingDaycareEgg(struct DayCare *daycare)
