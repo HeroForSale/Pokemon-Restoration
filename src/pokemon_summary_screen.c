@@ -2054,6 +2054,30 @@ static void EndEvEdit(u8 taskId)
 static const u8 sTextTableBlack[] = _("{COLOR}{01}");
 static const u8 sTextTableRed[]   = _("{COLOR}{05}");
 static const u8 sTextTableBlue[]  = _("{COLOR}{08}");
+static const u8 sTextTableGray[]  = _("{COLOR}{04}"); // Minimal Grinding: fixed EVs
+
+// Grid lines (palette 6: 2 = light gray, 4 = dark gray)
+#define GRID_LIGHT        2
+#define GRID_DARK         4
+#define GRID_DIVIDER_X    48  // where the green name column meets the white numbers
+
+static void DrawTableGrid(u8 windowId, u32 height, u32 firstRowY, u32 rowHeight, u32 rows, bool32 headerLine)
+{
+    u32 width = 160;
+
+    // Vertical divider between name and number columns
+    FillWindowPixelRect(windowId, PIXEL_FILL(GRID_DARK), GRID_DIVIDER_X, 2, 1, height - 4);
+    // Lines between rows (the first one under the header is darker)
+    for (u32 i = 1; i < rows; i++)
+    {
+        u32 y = firstRowY + i * rowHeight - 1;
+        u32 color = (headerLine && i == 1) ? GRID_DARK : GRID_LIGHT;
+        FillWindowPixelRect(windowId, PIXEL_FILL(color), 2, y, width - 4, 1);
+    }
+    // Darker seam along the stat box's bottom edge so the two boxes read as separate
+    if (headerLine)
+        FillWindowPixelRect(windowId, PIXEL_FILL(GRID_DARK), 2, height - 1, width - 4, 1);
+}
 
 static void PrintTableTextRight(u8 windowId, const u8 *text, u32 rightX, u32 y)
 {
@@ -2086,7 +2110,7 @@ static void PrintSkillsTable(void)
 
     PrintTableTextRight(windowId, COMPOUND_STRING("STAT"), TABLE_STAT_RIGHT, TABLE_Y);
     PrintTableTextRight(windowId, COMPOUND_STRING("BASE"), TABLE_BASE_RIGHT, TABLE_Y);
-    PrintTableTextRight(windowId, COMPOUND_STRING("EV"), TABLE_EV_RIGHT, TABLE_Y);
+    PrintTableTextRight(windowId, IsMinimalGrindingMode() ? COMPOUND_STRING("MIN") : COMPOUND_STRING("EV"), TABLE_EV_RIGHT, TABLE_Y);
 
     for (u32 row = 0; row < NUM_STATS; row++)
     {
@@ -2133,11 +2157,16 @@ static void PrintSkillsTable(void)
         // EV (red = editor cursor)
         if (sMonSummaryScreen->evEditActive && row == sMonSummaryScreen->evEditCursor)
             end = StringCopy(text, sTextTableRed);
+        else if (IsMinimalGrindingMode())
+            end = StringCopy(text, sTextTableGray);
         else
             end = StringCopy(text, sTextTableBlack);
         ConvertIntToDecimalStringN(end, GetMonStatEV(mon, stat), STR_CONV_MODE_LEFT_ALIGN, 3);
         PrintTableTextRight(windowId, text, TABLE_EV_RIGHT, y);
     }
+    // Drawn after the text so glyph backgrounds don't erase the lines
+    DrawTableGrid(windowId, sPageSkillsTemplate[PSS_DATA_WINDOW_SKILLS_TABLE].height * TILE_HEIGHT, TABLE_Y, TABLE_ROW_HEIGHT, NUM_STATS + 1, TRUE);
+    CopyWindowToVram(windowId, COPYWIN_GFX);
     PrintSkillsFooter();
 }
 
@@ -2178,6 +2207,8 @@ static void PrintSkillsFooter(void)
     PrintTextOnWindowWithFont(windowId, COMPOUND_STRING("NEXT LV."), TABLE_NAME_X, FOOTER_Y + FOOTER_ROW_HEIGHT, 0, 0, FONT_SMALL);
     ConvertIntToDecimalStringN(gStringVar1, expToNextLevel, STR_CONV_MODE_LEFT_ALIGN, 7);
     PrintTableTextRight(windowId, gStringVar1, TABLE_EV_RIGHT, FOOTER_Y + FOOTER_ROW_HEIGHT);
+    DrawTableGrid(windowId, sPageSkillsTemplate[PSS_DATA_WINDOW_SKILLS_FOOTER].height * TILE_HEIGHT, FOOTER_Y, FOOTER_ROW_HEIGHT, 2, FALSE);
+    CopyWindowToVram(windowId, COPYWIN_GFX);
 }
 
 static void Task_HandleEvEditInput(u8 taskId)
