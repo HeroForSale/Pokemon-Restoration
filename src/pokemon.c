@@ -4059,9 +4059,11 @@ u8 GetItemEffectParamOffset(enum BattlerId battler, enum Item itemId, u8 effectB
     return offset;
 }
 
+// Restoration: the hidden nature (set by mints and the Pokémon Center nature vendor) is the
+// mon's real nature everywhere, not just for stats. It equals the personality nature until changed.
 u8 GetNature(struct Pokemon *mon)
 {
-    return GetMonData(mon, MON_DATA_PERSONALITY, 0) % NUM_NATURES;
+    return GetMonData(mon, MON_DATA_HIDDEN_NATURE, 0);
 }
 
 u8 GetNatureFromPersonality(u32 personality)
