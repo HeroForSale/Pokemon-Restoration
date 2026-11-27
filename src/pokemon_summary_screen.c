@@ -664,8 +664,8 @@ static const struct WindowTemplate sPageInfoTemplate[] =
 };
 static const struct WindowTemplate sPageSkillsTemplate[] =
 {
-    // Pokémon Restoration: one-screen stat table. Slot 0 is the footer (item, next level),
-    // slot 2 is the table. Slots 1, 3 and 4 are no longer used on this page.
+    // Pokémon Restoration: one-screen stat table. Slot 2 is the table (with the item and
+    // next level lines at its bottom). Slots 0, 1, 3 and 4 are no longer used on this page.
     [PSS_DATA_WINDOW_SKILLS_FOOTER] = {
         .bg = 0,
         .tilemapLeft = 10,
@@ -689,7 +689,7 @@ static const struct WindowTemplate sPageSkillsTemplate[] =
         .tilemapLeft = 10,
         .tilemapTop = 4,
         .width = 20,
-        .height = 10,
+        .height = 13,
         .paletteNum = 6,
         .baseBlock = 467,
     },
@@ -2044,8 +2044,8 @@ static void EndEvEdit(u8 taskId)
 // Table layout (pixels inside the table window, FONT_SMALL, 12px rows)
 #define TABLE_ROW_HEIGHT   11
 #define TABLE_Y            1
-#define FOOTER_Y           4
-#define FOOTER_ROW_HEIGHT  12
+#define FOOTER_Y           (TABLE_Y + (NUM_STATS + 1) * TABLE_ROW_HEIGHT) // item / next level share the table window
+#define FOOTER_ROW_HEIGHT  TABLE_ROW_HEIGHT
 #define TABLE_NAME_X       6
 #define TABLE_STAT_RIGHT   94
 #define TABLE_BASE_RIGHT   124
@@ -2138,17 +2138,16 @@ static void PrintSkillsTable(void)
         ConvertIntToDecimalStringN(end, GetMonStatEV(mon, stat), STR_CONV_MODE_LEFT_ALIGN, 3);
         PrintTableTextRight(windowId, text, TABLE_EV_RIGHT, y);
     }
+    PrintSkillsFooter();
 }
 
 static void PrintSkillsFooter(void)
 {
     struct PokeSummary *sum = &sMonSummaryScreen->summary;
-    u8 windowId = AddWindowFromTemplateList(sPageSkillsTemplate, PSS_DATA_WINDOW_SKILLS_FOOTER);
+    u8 windowId = AddWindowFromTemplateList(sPageSkillsTemplate, PSS_DATA_WINDOW_SKILLS_TABLE);
     const u8 *itemText;
     u32 expToNextLevel;
     u32 fontId;
-
-    FillWindowPixelBuffer(windowId, PIXEL_FILL(0));
 
     if (sum->item == ITEM_ENIGMA_BERRY_E_READER
         && IsMultiBattle() == TRUE
@@ -4043,7 +4042,6 @@ static void PrintSkillsPageText(void)
     sMonSummaryScreen->evEditActive = FALSE;
     ShowUtilityPrompt(SUMMARY_SKILLS_MODE_STATS);
     PrintSkillsTable();
-    PrintSkillsFooter();
 }
 
 static void Task_PrintSkillsPage(u8 taskId)
@@ -4053,12 +4051,9 @@ static void Task_PrintSkillsPage(u8 taskId)
     switch (data[0])
     {
     case 1:
-        PrintSkillsTable();
+        PrintSkillsTable(); // also prints the item / next level lines
         break;
     case 2:
-        PrintSkillsFooter();
-        break;
-    case 3:
         DestroyTask(taskId);
         return;
     }
