@@ -52,6 +52,12 @@
 #define P_CRIES_ENABLED                  TRUE        // If TRUE, Pokémon will have cries. Disabling this saves around a LOT of ROM space (over 25%!), but instead we recommend disabling individual unused Pokémon families in include/config/species_enabled.h.
 #define P_LEGENDARY_PERFECT_IVS          GEN_LATEST  // Since Gen 6, Legendaries, Mythicals and Ultra Beasts found in the wild or given through gifts have at least 3 perfect IVs.
 #define P_EV_CAP                         GEN_LATEST  // Since Gen 6, the max EVs per stat is 252 instead of 255.
+
+// Pokémon Restoration: perfect IVs and EV modes (not applied in test builds, so `make check` keeps vanilla behavior)
+#define P_PERFECT_IVS                    TRUE        // If TRUE, every Pokémon (player, wild, trainer) reads as 31 in every IV, whatever is stored. Works on old saves. Trainer IVs in trainers.party are ignored.
+#define P_EV_MODE_OPTION                 TRUE        // If TRUE, battles give no EVs and the Options menu has EV MODE: MINIMAL (every mon uses a flat EV spread) or MANUAL (stored EVs, set by hand on the summary screen).
+#define P_MINIMAL_GRINDING_EVS           85          // EVs used for every stat of every Pokémon in Minimal Grinding mode.
+#define P_MANUAL_MODE_TRAINER_EVS        85          // In Manual mode, trainer Pokémon with no EVs in trainers.party get this flat spread so they keep pace with the player.
 #define P_SHOW_TERA_TYPE                 GEN_8       // Since Gen 9, the Tera Type is shown on the summary screen.
 #define P_TM_LITERACY                    GEN_LATEST  // Since Gen 6, TM illiterate Pokémon can learn TMs that teach moves that are in their level-up learnsets.
 #define P_CAN_FORGET_HIDDEN_MOVE         FALSE       // If TRUE, Pokémon can forget any move, even if it is an HM.

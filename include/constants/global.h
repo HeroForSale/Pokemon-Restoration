@@ -201,6 +201,9 @@ enum Gender
 #define OPTIONS_BATTLE_STYLE_SHIFT 0
 #define OPTIONS_BATTLE_STYLE_SET 1
 
+#define OPTIONS_EV_MODE_MINIMAL 0 // Minimal Grinding: flat EV spread for every mon
+#define OPTIONS_EV_MODE_MANUAL 1  // EVs set by hand on the summary screen
+
 enum __attribute__((packed)) Direction
 {
     DIR_NONE,

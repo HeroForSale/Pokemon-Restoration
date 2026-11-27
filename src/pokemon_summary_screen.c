@@ -6,6 +6,7 @@
 #include "battle_message.h"
 #include "battle_tent.h"
 #include "battle_factory.h"
+#include "caps.h"
 #include "bg.h"
 #include "contest.h"
 #include "contest_effect.h"
@@ -188,6 +189,8 @@ static EWRAM_DATA struct PokemonSummaryScreenData
     s16 switchCounter; // Used for various switch statement cases that decompress/load graphics or Pokémon data
     u8 unk_filler4[6];
     u8 categoryIconSpriteId;
+    bool8 evEditActive; // Pokémon Restoration: editing EVs on the skills page (Manual EV mode)
+    u8 evEditCursor;    // index into sEvEditStatOrder
 } *sMonSummaryScreen = NULL;
 
 EWRAM_DATA u8 gLastViewedMonIndex = 0;
@@ -332,6 +335,9 @@ static void PrintTextOnWindowWithFont(u8 windowId, const u8 *string, u8 x, u8 y,
 static const u8 *GetLetterGrade(u32 stat);
 static u8 AddWindowFromTemplateList(const struct WindowTemplate *template, u8 templateId);
 static u8 IncrementSkillsStatsMode(u8 mode);
+static bool32 CanEditEvs(void);
+static void StartEvEdit(u8 taskId);
+static void Task_HandleEvEditInput(u8 taskId);
 static void ClearStatLabel(u32 length, u32 statsCoordX, u32 statsCoordY);
 u32 GetAdjustedIvData(struct Pokemon *mon, u32 stat);
 static void UpdateMoveRelearnerState();
@@ -1791,7 +1797,10 @@ static void Task_HandleInput(u8 taskId)
             {
                 if (ShouldShowIvEvPrompt())
                 {
-                    ShowMonSkillsInfo(taskId, IncrementSkillsStatsMode(sMonSummaryScreen->skillsPageMode));
+                    if (sMonSummaryScreen->skillsPageMode == SUMMARY_SKILLS_MODE_EVS && CanEditEvs())
+                        StartEvEdit(taskId);
+                    else
+                        ShowMonSkillsInfo(taskId, IncrementSkillsStatsMode(sMonSummaryScreen->skillsPageMode));
                     PlaySE(SE_SELECT);
                 }
             }
@@ -1912,12 +1921,164 @@ void ExtractMonSkillIvData(struct Pokemon *mon, struct PokeSummary *sum)
 
 void ExtractMonSkillEvData(struct Pokemon *mon, struct PokeSummary *sum)
 {
-    sum->currentHP = GetMonData(mon, MON_DATA_HP_EV);
-    sum->atk = GetMonData(mon, MON_DATA_ATK_EV);
-    sum->def = GetMonData(mon, MON_DATA_DEF_EV);
-    sum->spatk = GetMonData(mon, MON_DATA_SPATK_EV);
-    sum->spdef = GetMonData(mon, MON_DATA_SPDEF_EV);
-    sum->speed = GetMonData(mon, MON_DATA_SPEED_EV);
+    // Shows the EVs the stat formula uses (a flat spread in Minimal Grinding mode).
+    sum->currentHP = GetMonStatEV(mon, STAT_HP);
+    sum->atk = GetMonStatEV(mon, STAT_ATK);
+    sum->def = GetMonStatEV(mon, STAT_DEF);
+    sum->spatk = GetMonStatEV(mon, STAT_SPATK);
+    sum->spdef = GetMonStatEV(mon, STAT_SPDEF);
+    sum->speed = GetMonStatEV(mon, STAT_SPEED);
+}
+
+// ---------------------------------------------------------------------------
+// Pokémon Restoration: EV editor (Manual EV mode)
+// Skills page: A shows EVs, A again starts editing.
+// Up/Down pick a stat, Right/Left +4/-4 (hold to repeat), R max, L zero.
+// A, B or START finishes and shows the recalculated stats.
+// ---------------------------------------------------------------------------
+#define EV_EDIT_STEP 4
+
+static const u8 sEvEditStatOrder[NUM_STATS] =
+{
+    STAT_HP, STAT_ATK, STAT_DEF, STAT_SPATK, STAT_SPDEF, STAT_SPEED
+};
+
+static bool32 CanEditEvs(void)
+{
+    if (!IsManualEvMode() || gMain.inBattle || gReceivedRemoteLinkPlayers)
+        return FALSE;
+    if (sMonSummaryScreen->mode != SUMMARY_MODE_NORMAL && sMonSummaryScreen->mode != SUMMARY_MODE_BOX)
+        return FALSE;
+    if (sMonSummaryScreen->summary.isEgg || InBattleFactory() || InSlateportBattleTent())
+        return FALSE;
+    // Only the player's own party or PC boxes
+    return sMonSummaryScreen->isBoxMon || sMonSummaryScreen->monList.mons == gParties[B_TRAINER_PLAYER];
+}
+
+static u32 GetSummaryMonTotalEvs(void)
+{
+    u32 total = 0;
+    for (u32 i = 0; i < NUM_STATS; i++)
+        total += GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_HP_EV + i);
+    return total;
+}
+
+static u32 GetEvEditCap(void)
+{
+    u32 cap = GetCurrentEVCap(); // MAX_TOTAL_EVS unless B_EV_CAP_TYPE is set in config/caps.h
+    if (cap > MAX_TOTAL_EVS)
+        cap = MAX_TOTAL_EVS;
+    return cap;
+}
+
+static void RedrawEvEdit(u8 taskId)
+{
+    ShowMonSkillsInfo(taskId, SUMMARY_SKILLS_MODE_EVS);
+    gTasks[taskId].func = Task_HandleEvEditInput;
+}
+
+static void StartEvEdit(u8 taskId)
+{
+    sMonSummaryScreen->evEditActive = TRUE;
+    sMonSummaryScreen->evEditCursor = 0;
+    sMonSummaryScreen->skillsPageMode = SUMMARY_SKILLS_MODE_EVS;
+    RedrawEvEdit(taskId);
+}
+
+static void SetSummaryMonEv(u32 stat, u32 value)
+{
+    u32 field = MON_DATA_HP_EV + stat;
+
+    SetMonData(&sMonSummaryScreen->currentMon, field, &value);
+    if (sMonSummaryScreen->isBoxMon)
+        SetBoxMonData(GetCurrentBoxmon(), field, &value);
+    else
+        SetMonData(&sMonSummaryScreen->monList.mons[sMonSummaryScreen->curMonIndex], field, &value);
+}
+
+static bool32 ChangeSummaryMonEv(s32 delta)
+{
+    u32 stat = sEvEditStatOrder[sMonSummaryScreen->evEditCursor];
+    s32 current = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_HP_EV + stat);
+    s32 others = GetSummaryMonTotalEvs() - current;
+    s32 value = current + delta;
+
+    if (value < 0)
+        value = 0;
+    if (value > MAX_PER_STAT_EVS)
+        value = MAX_PER_STAT_EVS;
+    if (others + value > (s32)GetEvEditCap())
+        value = (s32)GetEvEditCap() - others;
+    if (value < 0)
+        value = 0;
+    if (value == current)
+        return FALSE;
+
+    SetSummaryMonEv(stat, value);
+    return TRUE;
+}
+
+static void EndEvEdit(u8 taskId)
+{
+    sMonSummaryScreen->evEditActive = FALSE;
+    if (!sMonSummaryScreen->isBoxMon)
+        CalculateMonStats(&sMonSummaryScreen->monList.mons[sMonSummaryScreen->curMonIndex]);
+    // Refresh the summary's copy (box mons get their stats recalculated here too)
+    CopyMonToSummaryStruct(&sMonSummaryScreen->currentMon);
+    sMonSummaryScreen->skillsPageMode = SUMMARY_SKILLS_MODE_STATS;
+    ShowMonSkillsInfo(taskId, SUMMARY_SKILLS_MODE_STATS);
+}
+
+static void Task_HandleEvEditInput(u8 taskId)
+{
+    if (MenuHelpers_ShouldWaitForLinkRecv() == TRUE || gPaletteFade.active)
+        return;
+
+    if (JOY_NEW(A_BUTTON | B_BUTTON | START_BUTTON))
+    {
+        PlaySE(SE_SELECT);
+        EndEvEdit(taskId);
+    }
+    else if (JOY_REPEAT(DPAD_UP))
+    {
+        PlaySE(SE_SELECT);
+        if (sMonSummaryScreen->evEditCursor == 0)
+            sMonSummaryScreen->evEditCursor = NUM_STATS - 1;
+        else
+            sMonSummaryScreen->evEditCursor--;
+        RedrawEvEdit(taskId);
+    }
+    else if (JOY_REPEAT(DPAD_DOWN))
+    {
+        PlaySE(SE_SELECT);
+        if (sMonSummaryScreen->evEditCursor >= NUM_STATS - 1)
+            sMonSummaryScreen->evEditCursor = 0;
+        else
+            sMonSummaryScreen->evEditCursor++;
+        RedrawEvEdit(taskId);
+    }
+    else if (JOY_REPEAT(DPAD_RIGHT))
+    {
+        if (ChangeSummaryMonEv(EV_EDIT_STEP))
+            RedrawEvEdit(taskId);
+    }
+    else if (JOY_REPEAT(DPAD_LEFT))
+    {
+        if (ChangeSummaryMonEv(-EV_EDIT_STEP))
+            RedrawEvEdit(taskId);
+    }
+    else if (JOY_NEW(R_BUTTON))
+    {
+        PlaySE(SE_SELECT);
+        if (ChangeSummaryMonEv(MAX_PER_STAT_EVS))
+            RedrawEvEdit(taskId);
+    }
+    else if (JOY_NEW(L_BUTTON))
+    {
+        PlaySE(SE_SELECT);
+        if (ChangeSummaryMonEv(-MAX_PER_STAT_EVS))
+            RedrawEvEdit(taskId);
+    }
 }
 
 bool32 HasAnyRelearnableMoves(enum MoveRelearnerStates state)
@@ -3833,7 +3994,9 @@ static void BufferStat(u8 *dst, enum Stat statIndex, u32 stat, u32 strId, u32 n)
     static const u8 sTextNatureNeutral[] = _("{COLOR}{01}");
     u8 *txtPtr;
 
-    if (statIndex == 0 || !P_SUMMARY_SCREEN_NATURE_COLORS || gNaturesInfo[sMonSummaryScreen->summary.mintNature].statUp == gNaturesInfo[sMonSummaryScreen->summary.mintNature].statDown)
+    if (sMonSummaryScreen->evEditActive && sMonSummaryScreen->skillsPageMode == SUMMARY_SKILLS_MODE_EVS)
+        txtPtr = StringCopy(dst, (statIndex == sEvEditStatOrder[sMonSummaryScreen->evEditCursor]) ? sTextNatureUp : sTextNatureNeutral);
+    else if (statIndex == 0 || !P_SUMMARY_SCREEN_NATURE_COLORS || gNaturesInfo[sMonSummaryScreen->summary.mintNature].statUp == gNaturesInfo[sMonSummaryScreen->summary.mintNature].statDown)
         txtPtr = StringCopy(dst, sTextNatureNeutral);
     else if (statIndex == gNaturesInfo[sMonSummaryScreen->summary.mintNature].statUp)
         txtPtr = StringCopy(dst, sTextNatureUp);
@@ -4779,6 +4942,8 @@ static inline void ShowUtilityPrompt(s16 mode)
     const u8* gText_SkillPageEvs = COMPOUND_STRING("EVs");
     const u8* gText_SkillPageStats = COMPOUND_STRING("STATS");
     const u8* gText_Rename = COMPOUND_STRING("RENAME");
+    const u8* gText_SkillPageEdit = COMPOUND_STRING("EDIT");
+    u8 evsLeftText[16];
 
     if (sMonSummaryScreen->currPageIndex == PSS_PAGE_INFO)
     {
@@ -4807,7 +4972,23 @@ static inline void ShowUtilityPrompt(s16 mode)
             }
             else if (mode == SUMMARY_SKILLS_MODE_EVS)
             {
-                promptText = gText_SkillPageStats;
+                if (sMonSummaryScreen->evEditActive)
+                {
+                    // "{remaining} LEFT"
+                    u32 total = GetSummaryMonTotalEvs();
+                    u32 cap = GetEvEditCap();
+                    u8 *end = ConvertIntToDecimalStringN(evsLeftText, (total < cap) ? cap - total : 0, STR_CONV_MODE_LEFT_ALIGN, 3);
+                    StringCopy(end, COMPOUND_STRING(" LEFT"));
+                    promptText = evsLeftText;
+                }
+                else if (CanEditEvs())
+                {
+                    promptText = gText_SkillPageEdit;
+                }
+                else
+                {
+                    promptText = gText_SkillPageStats;
+                }
             }
         }
     }
