@@ -2056,11 +2056,14 @@ static const u8 sTextTableRed[]   = _("{COLOR}{05}");
 static const u8 sTextTableBlue[]  = _("{COLOR}{08}");
 static const u8 sTextTableGray[]  = _("{COLOR}{04}"); // Minimal Grinding: fixed EVs
 
-// Grid lines (palette 6: 2 = light gray, 4 = dark gray)
-#define GRID_LIGHT        2
+// Grid lines (palette 6 index 4 = dark gray)
 #define GRID_DARK         4
 #define GRID_DIVIDER_X    50  // where the green name column meets the white numbers
 #define GRID_LINE_OFFSET  2   // FONT_SMALL glyphs sit ~4px below their y and end ~11px below it, so lines go 2px into the next row's top padding
+
+#define GRID_LINE_LEFT    4   // keeps lines inside the box's left border
+#define GRID_COL1_X       98  // between STAT and BASE
+#define GRID_COL2_X       128 // between BASE and EV/MIN
 
 static void DrawTableGrid(u8 windowId, u32 height, u32 firstRowY, u32 rowHeight, u32 rows, bool32 headerLine)
 {
@@ -2068,16 +2071,21 @@ static void DrawTableGrid(u8 windowId, u32 height, u32 firstRowY, u32 rowHeight,
 
     // Vertical divider between name and number columns
     FillWindowPixelRect(windowId, PIXEL_FILL(GRID_DARK), GRID_DIVIDER_X, 2, 1, height - 4);
-    // Lines between rows (the first one under the header is darker)
+    // Dividers between the number columns (stat table only)
+    if (headerLine)
+    {
+        FillWindowPixelRect(windowId, PIXEL_FILL(GRID_DARK), GRID_COL1_X, 2, 1, height - 4);
+        FillWindowPixelRect(windowId, PIXEL_FILL(GRID_DARK), GRID_COL2_X, 2, 1, height - 4);
+    }
+    // Lines between rows
     for (u32 i = 1; i < rows; i++)
     {
         u32 y = firstRowY + i * rowHeight + GRID_LINE_OFFSET;
-        u32 color = (headerLine && i == 1) ? GRID_DARK : GRID_LIGHT;
-        FillWindowPixelRect(windowId, PIXEL_FILL(color), 2, y, width - 4, 1);
+        FillWindowPixelRect(windowId, PIXEL_FILL(GRID_DARK), GRID_LINE_LEFT, y, width - GRID_LINE_LEFT - 4, 1);
     }
     // Darker seam along the stat box's bottom edge so the two boxes read as separate
     if (headerLine)
-        FillWindowPixelRect(windowId, PIXEL_FILL(GRID_DARK), 2, height - 1, width - 4, 1);
+        FillWindowPixelRect(windowId, PIXEL_FILL(GRID_DARK), GRID_LINE_LEFT, height - 1, width - GRID_LINE_LEFT - 4, 1);
 }
 
 static void PrintTableTextRight(u8 windowId, const u8 *text, u32 rightX, u32 y)
