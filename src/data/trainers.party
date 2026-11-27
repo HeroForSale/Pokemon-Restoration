@@ -4802,7 +4802,7 @@ AI: Basic Trainer / Smart Mon Choices / Ace Pokemon
 
 Geodude @ Oran Berry
 Ability: Sturdy
-Level: 14
+Level: 15
 IVs: 15 HP / 15 Atk / 15 Def / 15 SpA / 15 SpD / 15 Spe
 - Rock Tomb
 - Smack Down
@@ -4820,7 +4820,7 @@ IVs: 15 HP / 15 Atk / 15 Def / 15 SpA / 15 SpD / 15 Spe
 
 Nacli
 Ability: Purifying Salt
-Level: 14
+Level: 15
 IVs: 15 HP / 15 Atk / 15 Def / 15 SpA / 15 SpD / 15 Spe
 - Rock Throw
 - Mud Shot
@@ -6011,11 +6011,11 @@ Double Battle: Yes
 AI: Check Bad Move
 
 Geodude
-Level: 12
+Level: 13
 IVs: 13 HP / 13 Atk / 13 Def / 13 SpA / 13 SpD / 13 Spe
 
 Nacli
-Level: 12
+Level: 13
 IVs: 14 HP / 14 Atk / 14 Def / 14 SpA / 14 SpD / 14 Spe
 
 === TRAINER_JOEY ===
@@ -10579,11 +10579,11 @@ Double Battle: Yes
 AI: Check Bad Move
 
 Geodude
-Level: 12
+Level: 14
 IVs: 14 HP / 14 Atk / 14 Def / 14 SpA / 14 SpD / 14 Spe
 
 Nosepass
-Level: 12
+Level: 14
 IVs: 15 HP / 15 Atk / 15 Def / 15 SpA / 15 SpD / 15 Spe
 
 === TRAINER_BRENDEN ===
