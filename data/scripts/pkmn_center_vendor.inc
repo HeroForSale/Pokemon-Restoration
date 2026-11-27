@@ -1,4 +1,4 @@
-@ Pokémon Center service vendor. Stands left of the counter in every Hoenn Pokémon Center.
+@ Pokémon Center service vendor. Stands behind the counter, right of Nurse Joy, in every Hoenn Pokémon Center.
 @ To add a service: push another option in PkmnCenterVendor_EventScript_Menu with the next id,
 @ add a case for it, and end the service with "goto PkmnCenterVendor_EventScript_AnythingElse".
 
