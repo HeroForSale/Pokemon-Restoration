@@ -2059,7 +2059,8 @@ static const u8 sTextTableGray[]  = _("{COLOR}{04}"); // Minimal Grinding: fixed
 // Grid lines (palette 6: 2 = light gray, 4 = dark gray)
 #define GRID_LIGHT        2
 #define GRID_DARK         4
-#define GRID_DIVIDER_X    48  // where the green name column meets the white numbers
+#define GRID_DIVIDER_X    50  // where the green name column meets the white numbers
+#define GRID_LINE_OFFSET  2   // FONT_SMALL glyphs sit ~4px below their y and end ~11px below it, so lines go 2px into the next row's top padding
 
 static void DrawTableGrid(u8 windowId, u32 height, u32 firstRowY, u32 rowHeight, u32 rows, bool32 headerLine)
 {
@@ -2070,7 +2071,7 @@ static void DrawTableGrid(u8 windowId, u32 height, u32 firstRowY, u32 rowHeight,
     // Lines between rows (the first one under the header is darker)
     for (u32 i = 1; i < rows; i++)
     {
-        u32 y = firstRowY + i * rowHeight - 1;
+        u32 y = firstRowY + i * rowHeight + GRID_LINE_OFFSET;
         u32 color = (headerLine && i == 1) ? GRID_DARK : GRID_LIGHT;
         FillWindowPixelRect(windowId, PIXEL_FILL(color), 2, y, width - 4, 1);
     }
