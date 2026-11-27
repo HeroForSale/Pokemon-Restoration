@@ -1480,8 +1480,9 @@ static bool8 DecompressGraphics(void)
         break;
     case 6:
         LoadPalette(gSummaryScreen_Pal, BG_PLTT_ID(0), 8 * PLTT_SIZE_4BPP);
-        // Pokémon Restoration: Skills page name column uses a copy of BG palette 2 in slot 10,
-        // with its yellow-green fill swapped for a true green. Nothing else uses slot 10.
+        // Pokémon Restoration: the Skills page stat/item boxes use a copy of BG palette 2 in slot 10,
+        // with its yellow-green (name column fill and box outline) swapped for a true green.
+        // Nothing else uses slot 10.
         LoadPalette(&gSummaryScreen_Pal[2 * 16], BG_PLTT_ID(SKILLS_NAME_COLUMN_PAL), PLTT_SIZE_4BPP);
         LoadPalette(&sSkillsNameColumnGreen, BG_PLTT_ID(SKILLS_NAME_COLUMN_PAL) + 12, PLTT_SIZEOF(1));
         LoadPalette(&gPPTextPalette, BG_PLTT_ID(8) + 1, PLTT_SIZEOF(16 - 1));
