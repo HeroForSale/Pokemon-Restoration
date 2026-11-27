@@ -29,7 +29,7 @@ void NatureVendor_BufferCurrentNature(void)
     StringCopy(gStringVar2, gNaturesInfo[nature].name);
 }
 
-// Pushes all 25 natures onto the dynmultichoice stack as "Rash (+SpA, -SpD)", id = nature.
+// Pushes all 25 natures onto the dynmultichoice stack as "Rash (+SpA, -SpD)" or "Hardy (Neutral)", id = nature.
 void NatureVendor_PushNatureOptions(void)
 {
     u32 i;
@@ -45,6 +45,10 @@ void NatureVendor_PushNatureOptions(void)
             end = StringAppend(end, COMPOUND_STRING(", -"));
             end = StringAppend(end, sStatAbbrevs[gNaturesInfo[i].statDown]);
             StringAppend(end, COMPOUND_STRING(")"));
+        }
+        else
+        {
+            StringAppend(end, COMPOUND_STRING(" (Neutral)"));
         }
         item.name = name;
         item.id = i;
