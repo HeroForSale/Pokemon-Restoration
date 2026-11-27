@@ -98,6 +98,8 @@
 #define PSS_DATA_WINDOW_SKILLS_STATS_LEFT 2 // HP, Attack, Defense
 #define PSS_DATA_WINDOW_SKILLS_STATS_RIGHT 3 // Sp. Attack, Sp. Defense, Speed
 #define PSS_DATA_WINDOW_EXP 4 // Exp, next level
+#define PSS_DATA_WINDOW_SKILLS_FOOTER PSS_DATA_WINDOW_SKILLS_HELD_ITEM // held item + next level, under the table
+#define PSS_DATA_WINDOW_SKILLS_TABLE  PSS_DATA_WINDOW_SKILLS_STATS_LEFT  // stat / base / EV table
 
 // Dynamic fields for the Battle Moves and Contest Moves pages.
 #define PSS_DATA_WINDOW_MOVE_NAMES 0
@@ -275,14 +277,14 @@ static void PrintEggOTID(void);
 static void PrintEggState(void);
 static void PrintEggMemo(void);
 static void Task_PrintSkillsPage(u8);
-static void PrintHeldItemName(void);
+static UNUSED void PrintHeldItemName(void);
 static void PrintSkillsPageText(void);
-static void PrintRibbonCount(void);
+static UNUSED void PrintRibbonCount(void);
 static void BufferLeftColumnStats(void);
 static void PrintLeftColumnStats(void);
 static void BufferRightColumnStats(void);
 static void PrintRightColumnStats(void);
-static void PrintExpPointsNextLevel(void);
+static UNUSED void PrintExpPointsNextLevel(void);
 static void PrintBattleMoves(void);
 static void Task_PrintBattleMoves(u8);
 static void PrintMoveNameAndPP(u8);
@@ -336,8 +338,11 @@ static const u8 *GetLetterGrade(u32 stat);
 static u8 AddWindowFromTemplateList(const struct WindowTemplate *template, u8 templateId);
 static u8 IncrementSkillsStatsMode(u8 mode);
 static bool32 CanEditEvs(void);
+static bool32 ShouldShowSkillsPrompt(void);
 static void StartEvEdit(u8 taskId);
 static void Task_HandleEvEditInput(u8 taskId);
+static void PrintSkillsTable(void);
+static void PrintSkillsFooter(void);
 static void ClearStatLabel(u32 length, u32 statsCoordX, u32 statsCoordY);
 u32 GetAdjustedIvData(struct Pokemon *mon, u32 stat);
 static void UpdateMoveRelearnerState();
@@ -659,14 +664,16 @@ static const struct WindowTemplate sPageInfoTemplate[] =
 };
 static const struct WindowTemplate sPageSkillsTemplate[] =
 {
-    [PSS_DATA_WINDOW_SKILLS_HELD_ITEM] = {
+    // Pokémon Restoration: one-screen stat table. Slot 0 is the footer (item, next level),
+    // slot 2 is the table. Slots 1, 3 and 4 are no longer used on this page.
+    [PSS_DATA_WINDOW_SKILLS_FOOTER] = {
         .bg = 0,
         .tilemapLeft = 10,
-        .tilemapTop = 4,
-        .width = 10,
-        .height = 2,
+        .tilemapTop = 15,
+        .width = 20,
+        .height = 3,
         .paletteNum = 6,
-        .baseBlock = 467,
+        .baseBlock = 687,
     },
     [PSS_DATA_WINDOW_SKILLS_RIBBON_COUNT] = {
         .bg = 0,
@@ -677,14 +684,14 @@ static const struct WindowTemplate sPageSkillsTemplate[] =
         .paletteNum = 6,
         .baseBlock = 487,
     },
-    [PSS_DATA_WINDOW_SKILLS_STATS_LEFT] = {
+    [PSS_DATA_WINDOW_SKILLS_TABLE] = {
         .bg = 0,
-        .tilemapLeft = 16,
-        .tilemapTop = 7,
-        .width = 6,
-        .height = 6,
+        .tilemapLeft = 10,
+        .tilemapTop = 4,
+        .width = 20,
+        .height = 11,
         .paletteNum = 6,
-        .baseBlock = 507,
+        .baseBlock = 467,
     },
     [PSS_DATA_WINDOW_SKILLS_STATS_RIGHT] = {
         .bg = 0,
@@ -1795,12 +1802,14 @@ static void Task_HandleInput(u8 taskId)
             }
             if (sMonSummaryScreen->currPageIndex == PSS_PAGE_SKILLS)
             {
-                if (ShouldShowIvEvPrompt())
+                if (CanEditEvs())
                 {
-                    if (sMonSummaryScreen->skillsPageMode == SUMMARY_SKILLS_MODE_EVS && CanEditEvs())
-                        StartEvEdit(taskId);
-                    else
-                        ShowMonSkillsInfo(taskId, IncrementSkillsStatsMode(sMonSummaryScreen->skillsPageMode));
+                    StartEvEdit(taskId);
+                    PlaySE(SE_SELECT);
+                }
+                else if (ShouldShowIvEvPrompt())
+                {
+                    ShowMonSkillsInfo(taskId, IncrementSkillsStatsMode(sMonSummaryScreen->skillsPageMode));
                     PlaySE(SE_SELECT);
                 }
             }
@@ -1973,7 +1982,8 @@ static u32 GetEvEditCap(void)
 
 static void RedrawEvEdit(u8 taskId)
 {
-    ShowMonSkillsInfo(taskId, SUMMARY_SKILLS_MODE_EVS);
+    PrintSkillsTable();
+    ShowUtilityPrompt(SUMMARY_SKILLS_MODE_STATS);
     gTasks[taskId].func = Task_HandleEvEditInput;
 }
 
@@ -1981,7 +1991,6 @@ static void StartEvEdit(u8 taskId)
 {
     sMonSummaryScreen->evEditActive = TRUE;
     sMonSummaryScreen->evEditCursor = 0;
-    sMonSummaryScreen->skillsPageMode = SUMMARY_SKILLS_MODE_EVS;
     RedrawEvEdit(taskId);
 }
 
@@ -2015,6 +2024,8 @@ static bool32 ChangeSummaryMonEv(s32 delta)
         return FALSE;
 
     SetSummaryMonEv(stat, value);
+    // Live preview: the summary's copy shows the new stats right away
+    CalculateMonStats(&sMonSummaryScreen->currentMon);
     return TRUE;
 }
 
@@ -2025,8 +2036,145 @@ static void EndEvEdit(u8 taskId)
         CalculateMonStats(&sMonSummaryScreen->monList.mons[sMonSummaryScreen->curMonIndex]);
     // Refresh the summary's copy (box mons get their stats recalculated here too)
     CopyMonToSummaryStruct(&sMonSummaryScreen->currentMon);
-    sMonSummaryScreen->skillsPageMode = SUMMARY_SKILLS_MODE_STATS;
-    ShowMonSkillsInfo(taskId, SUMMARY_SKILLS_MODE_STATS);
+    PrintSkillsTable();
+    ShowUtilityPrompt(SUMMARY_SKILLS_MODE_STATS);
+    gTasks[taskId].func = Task_HandleInput;
+}
+
+// Table layout (pixels inside the table window, FONT_SMALL, 12px rows)
+#define TABLE_ROW_HEIGHT   12
+#define TABLE_Y            2
+#define TABLE_NAME_X       6
+#define TABLE_STAT_RIGHT   94
+#define TABLE_BASE_RIGHT   124
+#define TABLE_EV_RIGHT     152
+
+static const u8 sTextTableBlack[] = _("{COLOR}{01}");
+static const u8 sTextTableRed[]   = _("{COLOR}{05}");
+static const u8 sTextTableBlue[]  = _("{COLOR}{08}");
+
+static void PrintTableTextRight(u8 windowId, const u8 *text, u32 rightX, u32 y)
+{
+    s32 x = (s32)rightX - (s32)GetStringWidth(FONT_SMALL, text, 0);
+    if (x < 0)
+        x = 0;
+    PrintTextOnWindowWithFont(windowId, text, x, y, 0, 0, FONT_SMALL);
+}
+
+static void PrintSkillsTable(void)
+{
+    const u8 *const statNames[NUM_STATS] =
+    {
+        [STAT_HP]    = COMPOUND_STRING("HP"),
+        [STAT_ATK]   = COMPOUND_STRING("ATTACK"),
+        [STAT_DEF]   = COMPOUND_STRING("DEFENSE"),
+        [STAT_SPEED] = COMPOUND_STRING("SPEED"),
+        [STAT_SPATK] = COMPOUND_STRING("SP. ATK"),
+        [STAT_SPDEF] = COMPOUND_STRING("SP. DEF"),
+    };
+    struct Pokemon *mon = &sMonSummaryScreen->currentMon;
+    struct PokeSummary *sum = &sMonSummaryScreen->summary;
+    u8 windowId = AddWindowFromTemplateList(sPageSkillsTemplate, PSS_DATA_WINDOW_SKILLS_TABLE);
+    enum Species species = GetMonData(mon, MON_DATA_SPECIES);
+    u8 text[32];
+    u8 *end;
+
+    ExtractMonSkillStatsData(mon, sum);
+    FillWindowPixelBuffer(windowId, PIXEL_FILL(0));
+
+    PrintTableTextRight(windowId, COMPOUND_STRING("STAT"), TABLE_STAT_RIGHT, TABLE_Y);
+    PrintTableTextRight(windowId, COMPOUND_STRING("BASE"), TABLE_BASE_RIGHT, TABLE_Y);
+    PrintTableTextRight(windowId, COMPOUND_STRING("EV"), TABLE_EV_RIGHT, TABLE_Y);
+
+    for (u32 row = 0; row < NUM_STATS; row++)
+    {
+        u32 stat = sEvEditStatOrder[row];
+        u32 y = TABLE_Y + (row + 1) * TABLE_ROW_HEIGHT;
+        const struct NatureInfo *nature = &gNaturesInfo[sum->mintNature];
+
+        // Name, colored by nature (red = raised, blue = lowered)
+        if (stat != STAT_HP && P_SUMMARY_SCREEN_NATURE_COLORS && nature->statUp != nature->statDown && stat == nature->statUp)
+            end = StringCopy(text, sTextTableRed);
+        else if (stat != STAT_HP && P_SUMMARY_SCREEN_NATURE_COLORS && nature->statUp != nature->statDown && stat == nature->statDown)
+            end = StringCopy(text, sTextTableBlue);
+        else
+            end = StringCopy(text, sTextTableBlack);
+        StringCopy(end, statNames[stat]);
+        PrintTextOnWindowWithFont(windowId, text, TABLE_NAME_X, y, 0, 0, FONT_SMALL);
+
+        // Calculated stat (HP as current/max)
+        if (stat == STAT_HP)
+        {
+            end = ConvertIntToDecimalStringN(text, sum->currentHP, STR_CONV_MODE_LEFT_ALIGN, 3);
+            *end++ = CHAR_SLASH;
+            ConvertIntToDecimalStringN(end, sum->maxHP, STR_CONV_MODE_LEFT_ALIGN, 3);
+        }
+        else
+        {
+            u32 value;
+            switch (stat)
+            {
+            case STAT_ATK:   value = sum->atk;   break;
+            case STAT_DEF:   value = sum->def;   break;
+            case STAT_SPATK: value = sum->spatk; break;
+            case STAT_SPDEF: value = sum->spdef; break;
+            default:         value = sum->speed; break;
+            }
+            ConvertIntToDecimalStringN(text, value, STR_CONV_MODE_LEFT_ALIGN, 3);
+        }
+        PrintTableTextRight(windowId, text, TABLE_STAT_RIGHT, y);
+
+        // Base stat
+        ConvertIntToDecimalStringN(text, GetSpeciesBaseStat(species, stat), STR_CONV_MODE_LEFT_ALIGN, 3);
+        PrintTableTextRight(windowId, text, TABLE_BASE_RIGHT, y);
+
+        // EV (red = editor cursor)
+        if (sMonSummaryScreen->evEditActive && row == sMonSummaryScreen->evEditCursor)
+            end = StringCopy(text, sTextTableRed);
+        else
+            end = StringCopy(text, sTextTableBlack);
+        ConvertIntToDecimalStringN(end, GetMonStatEV(mon, stat), STR_CONV_MODE_LEFT_ALIGN, 3);
+        PrintTableTextRight(windowId, text, TABLE_EV_RIGHT, y);
+    }
+}
+
+static void PrintSkillsFooter(void)
+{
+    struct PokeSummary *sum = &sMonSummaryScreen->summary;
+    u8 windowId = AddWindowFromTemplateList(sPageSkillsTemplate, PSS_DATA_WINDOW_SKILLS_FOOTER);
+    const u8 *itemText;
+    u32 expToNextLevel;
+    u32 fontId;
+
+    FillWindowPixelBuffer(windowId, PIXEL_FILL(0));
+
+    if (sum->item == ITEM_ENIGMA_BERRY_E_READER
+        && IsMultiBattle() == TRUE
+        && (sMonSummaryScreen->curMonIndex == 1 || sMonSummaryScreen->curMonIndex == 4 || sMonSummaryScreen->curMonIndex == 5))
+    {
+        itemText = GetItemName(ITEM_ENIGMA_BERRY_E_READER);
+    }
+    else if (sum->item == ITEM_NONE)
+    {
+        itemText = gText_None;
+    }
+    else
+    {
+        CopyItemName(sum->item, gStringVar1);
+        itemText = gStringVar1;
+    }
+
+    PrintTextOnWindowWithFont(windowId, COMPOUND_STRING("ITEM"), TABLE_NAME_X, 0, 0, 0, FONT_SMALL);
+    fontId = GetFontIdToFit(itemText, FONT_SMALL, 0, TABLE_EV_RIGHT - 40);
+    PrintTextOnWindowWithFont(windowId, itemText, TABLE_EV_RIGHT - GetStringWidth(fontId, itemText, 0), 0, 0, 0, fontId);
+
+    if (sum->level < MAX_LEVEL)
+        expToNextLevel = gExperienceTables[gSpeciesInfo[sum->species].growthRate][sum->level + 1] - sum->exp;
+    else
+        expToNextLevel = 0;
+    PrintTextOnWindowWithFont(windowId, COMPOUND_STRING("NEXT LV."), TABLE_NAME_X, TABLE_ROW_HEIGHT, 0, 0, FONT_SMALL);
+    ConvertIntToDecimalStringN(gStringVar1, expToNextLevel, STR_CONV_MODE_LEFT_ALIGN, 7);
+    PrintTableTextRight(windowId, gStringVar1, TABLE_EV_RIGHT, TABLE_ROW_HEIGHT);
 }
 
 static void Task_HandleEvEditInput(u8 taskId)
@@ -3479,10 +3627,7 @@ static void PutPageWindowTilemaps(u8 page)
         break;
     case PSS_PAGE_SKILLS:
         PutWindowTilemap(PSS_LABEL_WINDOW_POKEMON_SKILLS_TITLE);
-        PutWindowTilemap(PSS_LABEL_WINDOW_POKEMON_SKILLS_STATS_LEFT);
-        PutWindowTilemap(PSS_LABEL_WINDOW_POKEMON_SKILLS_STATS_RIGHT);
-        PutWindowTilemap(PSS_LABEL_WINDOW_POKEMON_SKILLS_EXP);
-        if (ShouldShowIvEvPrompt())
+        if (ShouldShowSkillsPrompt())
             PutWindowTilemap(PSS_LABEL_WINDOW_PROMPT_UTILITY);
         break;
     case PSS_PAGE_BATTLE_MOVES:
@@ -3538,7 +3683,7 @@ static void ClearPageWindowTilemaps(u8 page)
         ClearWindowTilemap(PSS_LABEL_WINDOW_POKEMON_SKILLS_STATS_LEFT);
         ClearWindowTilemap(PSS_LABEL_WINDOW_POKEMON_SKILLS_STATS_RIGHT);
         ClearWindowTilemap(PSS_LABEL_WINDOW_POKEMON_SKILLS_EXP);
-        if (ShouldShowIvEvPrompt())
+        if (ShouldShowSkillsPrompt())
             ClearWindowTilemap(PSS_LABEL_WINDOW_PROMPT_UTILITY);
         ClearWindowTilemap(PSS_LABEL_WINDOW_PROMPT_RELEARN);
         break;
@@ -3892,15 +4037,11 @@ static void PrintEggMemo(void)
 
 static void PrintSkillsPageText(void)
 {
-    PrintHeldItemName();
-    PrintRibbonCount();
-    if (ShouldShowIvEvPrompt())
-        ShowUtilityPrompt(SUMMARY_SKILLS_MODE_STATS);
-    BufferLeftColumnStats();
-    PrintLeftColumnStats();
-    BufferRightColumnStats();
-    PrintRightColumnStats();
-    PrintExpPointsNextLevel();
+    // Pokémon Restoration: one table (stat / base / EV) plus an item and next-level footer
+    sMonSummaryScreen->evEditActive = FALSE;
+    ShowUtilityPrompt(SUMMARY_SKILLS_MODE_STATS);
+    PrintSkillsTable();
+    PrintSkillsFooter();
 }
 
 static void Task_PrintSkillsPage(u8 taskId)
@@ -3910,37 +4051,19 @@ static void Task_PrintSkillsPage(u8 taskId)
     switch (data[0])
     {
     case 1:
-        PrintHeldItemName();
+        PrintSkillsTable();
         break;
     case 2:
-        PrintRibbonCount();
+        PrintSkillsFooter();
         break;
     case 3:
-        ChangeStatLabel(SUMMARY_SKILLS_MODE_STATS);
-        break;
-    case 4:
-        BufferLeftColumnStats();
-        break;
-    case 5:
-        PrintLeftColumnStats();
-        break;
-    case 6:
-        BufferRightColumnStats();
-        break;
-    case 7:
-        PrintRightColumnStats();
-        break;
-    case 8:
-        PrintExpPointsNextLevel();
-        break;
-    case 9:
         DestroyTask(taskId);
         return;
     }
     data[0]++;
 }
 
-static void PrintHeldItemName(void)
+static UNUSED void PrintHeldItemName(void)
 {
     const u8 *text;
     u32 fontId;
@@ -3967,7 +4090,7 @@ static void PrintHeldItemName(void)
     PrintTextOnWindowWithFont(AddWindowFromTemplateList(sPageSkillsTemplate, PSS_DATA_WINDOW_SKILLS_HELD_ITEM), text, x, 1, 0, 0, fontId);
 }
 
-static void PrintRibbonCount(void)
+static UNUSED void PrintRibbonCount(void)
 {
     const u8 *text;
     int x;
@@ -3994,9 +4117,7 @@ static void BufferStat(u8 *dst, enum Stat statIndex, u32 stat, u32 strId, u32 n)
     static const u8 sTextNatureNeutral[] = _("{COLOR}{01}");
     u8 *txtPtr;
 
-    if (sMonSummaryScreen->evEditActive && sMonSummaryScreen->skillsPageMode == SUMMARY_SKILLS_MODE_EVS)
-        txtPtr = StringCopy(dst, (statIndex == sEvEditStatOrder[sMonSummaryScreen->evEditCursor]) ? sTextNatureUp : sTextNatureNeutral);
-    else if (statIndex == 0 || !P_SUMMARY_SCREEN_NATURE_COLORS || gNaturesInfo[sMonSummaryScreen->summary.mintNature].statUp == gNaturesInfo[sMonSummaryScreen->summary.mintNature].statDown)
+    if (statIndex == 0 || !P_SUMMARY_SCREEN_NATURE_COLORS || gNaturesInfo[sMonSummaryScreen->summary.mintNature].statUp == gNaturesInfo[sMonSummaryScreen->summary.mintNature].statDown)
         txtPtr = StringCopy(dst, sTextNatureNeutral);
     else if (statIndex == gNaturesInfo[sMonSummaryScreen->summary.mintNature].statUp)
         txtPtr = StringCopy(dst, sTextNatureUp);
@@ -4113,7 +4234,7 @@ static void PrintRightColumnStats(void)
     PrintTextOnWindow(AddWindowFromTemplateList(sPageSkillsTemplate, PSS_DATA_WINDOW_SKILLS_STATS_RIGHT), gStringVar4, x, 1, 0, 0);
 }
 
-static void PrintExpPointsNextLevel(void)
+static UNUSED void PrintExpPointsNextLevel(void)
 {
     struct PokeSummary *sum = &sMonSummaryScreen->summary;
     u8 windowId = AddWindowFromTemplateList(sPageSkillsTemplate, PSS_DATA_WINDOW_EXP);
@@ -4921,6 +5042,11 @@ static inline bool32 ShouldShowRename(void)
          && GetPlayerIDAsU32() == sMonSummaryScreen->summary.OTID);
 }
 
+static bool32 ShouldShowSkillsPrompt(void)
+{
+    return CanEditEvs() || ShouldShowIvEvPrompt();
+}
+
 static inline bool32 ShouldShowIvEvPrompt(void)
 {
     if (P_SUMMARY_SCREEN_IV_EV_BOX_ONLY)
@@ -4952,6 +5078,22 @@ static inline void ShowUtilityPrompt(s16 mode)
         else
             promptText = gText_Cancel2;
     }
+    else if (sMonSummaryScreen->currPageIndex == PSS_PAGE_SKILLS && (sMonSummaryScreen->evEditActive || CanEditEvs()))
+    {
+        if (sMonSummaryScreen->evEditActive)
+        {
+            // "{remaining} LEFT"
+            u32 total = GetSummaryMonTotalEvs();
+            u32 cap = GetEvEditCap();
+            u8 *end = ConvertIntToDecimalStringN(evsLeftText, (total < cap) ? cap - total : 0, STR_CONV_MODE_LEFT_ALIGN, 3);
+            StringCopy(end, COMPOUND_STRING(" LEFT"));
+            promptText = evsLeftText;
+        }
+        else
+        {
+            promptText = gText_SkillPageEdit;
+        }
+    }
     else if (sMonSummaryScreen->currPageIndex == PSS_PAGE_SKILLS)
     {
         if (ShouldShowIvEvPrompt())
@@ -4972,23 +5114,7 @@ static inline void ShowUtilityPrompt(s16 mode)
             }
             else if (mode == SUMMARY_SKILLS_MODE_EVS)
             {
-                if (sMonSummaryScreen->evEditActive)
-                {
-                    // "{remaining} LEFT"
-                    u32 total = GetSummaryMonTotalEvs();
-                    u32 cap = GetEvEditCap();
-                    u8 *end = ConvertIntToDecimalStringN(evsLeftText, (total < cap) ? cap - total : 0, STR_CONV_MODE_LEFT_ALIGN, 3);
-                    StringCopy(end, COMPOUND_STRING(" LEFT"));
-                    promptText = evsLeftText;
-                }
-                else if (CanEditEvs())
-                {
-                    promptText = gText_SkillPageEdit;
-                }
-                else
-                {
-                    promptText = gText_SkillPageStats;
-                }
+                promptText = gText_SkillPageStats;
             }
         }
     }
