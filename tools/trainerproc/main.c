@@ -139,6 +139,9 @@ struct Trainer
     struct String mugshot;
     int mugshot_line;
 
+    bool no_bag;
+    int no_bag_line;
+
     struct String starting_status[STARTING_STATUS_COUNT];
     int starting_status_n;
     int starting_status_line;
@@ -1264,6 +1267,14 @@ static bool parse_trainer(struct Parser *p, const struct Parsed *parsed, struct 
             if (!token_battle_type(p, &value, &trainer->battle_type))
                 any_error = !show_parse_error(p);
         }
+        else if (is_literal_token(&key, "No Bag"))
+        {
+            if (trainer->no_bag_line)
+                any_error = !set_show_parse_error(p, key.location, "duplicate 'No Bag'");
+            trainer->no_bag_line = value.location.line;
+            if (!token_bool(p, &value, &trainer->no_bag))
+                any_error = !show_parse_error(p);
+        }
         else if (is_literal_token(&key, "Mugshot"))
         {
             if (trainer->mugshot_line)
@@ -1899,6 +1910,12 @@ static void fprint_trainers(const char *output_path, FILE *f, struct Parsed *par
                 fprint_constant(f, "AI_FLAG", trainer->ai_flags[i]);
             }
             fprintf(f, ",\n");
+        }
+
+        if (trainer->no_bag)
+        {
+            fprintf(f, "#line %d\n", trainer->no_bag_line);
+            fprintf(f, "        .noBagUse = TRUE,\n");
         }
 
         if (!is_empty_string(trainer->mugshot))
