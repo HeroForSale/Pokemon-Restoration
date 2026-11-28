@@ -9327,7 +9327,8 @@ void TryRestoreHeldItems(void)
             if (originaItem == ITEM_NONE)
                 continue;
 
-            if (GetItemPocket(originaItem) == POCKET_BERRIES)
+            if (GetItemPocket(originaItem) == POCKET_BERRIES
+             && !(B_RESTORE_HELD_BERRIES && trainer == B_TRAINER_PLAYER))
                 continue;
 
             SetMonData(&gParties[trainer][partySlot], MON_DATA_HELD_ITEM, &originaItem);
@@ -10887,8 +10888,26 @@ bool32 IsBattlerInvalidForSpreadMove(enum BattlerId battlerAtk, enum BattlerId b
         || IsBattlerUnaffectedByMove(battlerDef);
 }
 
+// Restoration: TRUE when the opponent (or either opponent in a two-trainer battle) has "No Bag: Yes".
+bool32 IsNoBagTrainerBattle(void)
+{
+    if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+     || (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED_LINK | BATTLE_TYPE_FRONTIER
+                           | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_SECRET_BASE | BATTLE_TYPE_TRAINER_HILL)))
+        return FALSE;
+
+    if (IsNoBagTrainer(TRAINER_BATTLE_PARAM.opponentA))
+        return TRUE;
+    if ((gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS) && IsNoBagTrainer(TRAINER_BATTLE_PARAM.opponentB))
+        return TRUE;
+    return FALSE;
+}
+
 bool32 IsAllowedToUseBag(void)
 {
+    if (IsNoBagTrainerBattle())
+        return FALSE;
+
     switch (VarGet(B_VAR_NO_BAG_USE))
     {
     case NO_BAG_RESTRICTION:
