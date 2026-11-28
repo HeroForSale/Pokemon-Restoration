@@ -26,6 +26,9 @@ Optional (but still recommended) fields for trainers:
     - Mugshot (enable Mugshots during battle transition
                set to one of Purple, Green, Pink, Blue or Yellow)
     - Starting Status (see include/constants/battle.h for values)
+    - No Bag (Yes/No. Restoration: Yes = neither the player nor this trainer
+              can use bag items in the battle. Use it for gyms, E4,
+              rivals and team admins/leaders.)
     - Multi Party   (Half reduces two-trainer battle sides to 3 Pokemon each)
                     (defaults to Full but requires B_MULTI_HALF_TEAMS to be FALSE)
 
@@ -531,9 +534,9 @@ Class: Aqua Admin
 Pic: Aqua Admin M
 Gender: Male
 Music: Aqua
-Items: Super Potion
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Mightyena
 Level: 34
@@ -564,6 +567,7 @@ Gender: Female
 Music: Aqua
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Carvanha
 Level: 28
@@ -581,6 +585,7 @@ Gender: Female
 Music: Aqua
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Sharpedo
 Level: 37
@@ -596,9 +601,9 @@ Class: Aqua Leader
 Pic: Aqua Leader Archie
 Gender: Male
 Music: Aqua
-Items: Super Potion / Super Potion
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Mightyena
 Level: 41
@@ -1266,9 +1271,9 @@ Class: Cooltrainer
 Pic: Cooltrainer M
 Gender: Male
 Music: Cool
-Items: Hyper Potion
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Swellow
 Level: 26
@@ -1283,9 +1288,9 @@ Class: Cooltrainer
 Pic: Cooltrainer M
 Gender: Male
 Music: Cool
-Items: Hyper Potion
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Spinda
 Level: 26
@@ -1300,9 +1305,9 @@ Class: Cooltrainer
 Pic: Cooltrainer M
 Gender: Male
 Music: Cool
-Items: Hyper Potion
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Slakoth @ Sitrus Berry
 Level: 26
@@ -1317,9 +1322,9 @@ Class: Cooltrainer
 Pic: Cooltrainer M
 Gender: Male
 Music: Cool
-Items: Hyper Potion
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Vigoroth
 Level: 26
@@ -1657,9 +1662,9 @@ Class: Cooltrainer
 Pic: Cooltrainer F
 Gender: Female
 Music: Cool
-Items: Hyper Potion
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Delcatty
 Level: 26
@@ -1673,9 +1678,9 @@ Class: Cooltrainer
 Pic: Cooltrainer F
 Gender: Female
 Music: Cool
-Items: Hyper Potion
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Wigglytuff
 Level: 26
@@ -1690,9 +1695,9 @@ Class: Cooltrainer
 Pic: Cooltrainer F
 Gender: Female
 Music: Cool
-Items: Hyper Potion
 Double Battle: No
 AI: Check Bad Move / Try To Faint / Force Setup First Turn
+No Bag: Yes
 
 Zangoose
 Level: 26
@@ -2135,9 +2140,9 @@ Class: Lady
 Pic: Lady
 Gender: Female
 Music: Female
-Items: Full Restore
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Luvdisc @ Nugget
 Level: 39
@@ -2198,9 +2203,9 @@ Class: Lady
 Pic: Lady
 Gender: Female
 Music: Female
-Items: Full Restore
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Seaking @ Nugget
 Level: 40
@@ -2352,6 +2357,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Goldeen
 Level: 40
@@ -2365,6 +2371,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Azumarill
 Level: 40
@@ -2378,6 +2385,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Clamperl
 Level: 35
@@ -2410,6 +2418,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Carvanha
 Level: 39
@@ -3172,6 +3181,7 @@ Gender: Male
 Music: Intense
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Machop
 Level: 13
@@ -3364,6 +3374,7 @@ Gender: Male
 Music: Intense
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Electrike
 Level: 17
@@ -3418,6 +3429,7 @@ Gender: Male
 Music: Intense
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Voltorb
 Level: 17
@@ -3553,6 +3565,7 @@ Gender: Male
 Music: Hiker
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Numel
 Level: 23
@@ -3566,6 +3579,7 @@ Gender: Male
 Music: Hiker
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Slugma
 Level: 22
@@ -3583,6 +3597,7 @@ Gender: Male
 Music: Hiker
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Numel
 Level: 23
@@ -3596,6 +3611,7 @@ Gender: Male
 Music: Hiker
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Slugma
 Level: 23
@@ -3609,6 +3625,7 @@ Gender: Male
 Music: Hiker
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Slugma
 Level: 23
@@ -4122,6 +4139,7 @@ Gender: Male
 Music: Intense
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Kirlia
 Level: 36
@@ -4135,6 +4153,7 @@ Gender: Male
 Music: Intense
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Ralts
 Level: 36
@@ -4148,6 +4167,7 @@ Gender: Male
 Music: Intense
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Girafarig
 Level: 36
@@ -4294,6 +4314,7 @@ Gender: Female
 Music: Intense
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Kirlia
 Level: 36
@@ -4307,6 +4328,7 @@ Gender: Female
 Music: Intense
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Xatu
 Level: 36
@@ -4320,6 +4342,7 @@ Gender: Female
 Music: Intense
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Kadabra
 Level: 36
@@ -4592,10 +4615,10 @@ Class: Elite Four
 Pic: Elite Four Sidney
 Gender: Male
 Music: Elite Four
-Items: Full Restore / Full Restore
 Double Battle: No
 AI: Basic Trainer / Force Setup First Turn
 Mugshot: Purple
+No Bag: Yes
 
 Mightyena
 Level: 46
@@ -4643,10 +4666,10 @@ Class: Elite Four
 Pic: Elite Four Phoebe
 Gender: Female
 Music: Elite Four
-Items: Full Restore / Full Restore
 Double Battle: No
 AI: Basic Trainer
 Mugshot: Green
+No Bag: Yes
 
 Dusclops
 Level: 48
@@ -4694,10 +4717,10 @@ Class: Elite Four
 Pic: Elite Four Glacia
 Gender: Female
 Music: Elite Four
-Items: Full Restore / Full Restore
 Double Battle: No
 AI: Basic Trainer
 Mugshot: Pink
+No Bag: Yes
 
 Sealeo
 Level: 50
@@ -4745,10 +4768,10 @@ Class: Elite Four
 Pic: Elite Four Drake
 Gender: Male
 Music: Elite Four
-Items: Full Restore / Full Restore
 Double Battle: No
 AI: Basic Trainer
 Mugshot: Blue
+No Bag: Yes
 
 Shelgon
 Level: 52
@@ -4796,9 +4819,9 @@ Class: Leader
 Pic: Leader Roxanne
 Gender: Female
 Music: Female
-Items: Super Potion / Super Potion
 Double Battle: Yes
 AI: Basic Trainer / Smart Mon Choices / Ace Pokemon
+No Bag: Yes
 
 Geodude @ Oran Berry
 Ability: Sturdy
@@ -4846,9 +4869,9 @@ Class: Leader
 Pic: Leader Brawly
 Gender: Male
 Music: Male
-Items: Super Potion / Super Potion
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Machop
 Level: 16
@@ -4880,9 +4903,9 @@ Class: Leader
 Pic: Leader Wattson
 Gender: Male
 Music: Male
-Items: Super Potion / Super Potion
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Voltorb
 Level: 20
@@ -4922,9 +4945,9 @@ Class: Leader
 Pic: Leader Flannery
 Gender: Female
 Music: Female
-Items: Hyper Potion / Hyper Potion
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Numel
 Level: 24
@@ -4964,9 +4987,9 @@ Class: Leader
 Pic: Leader Norman
 Gender: Male
 Music: Male
-Items: Hyper Potion / Hyper Potion
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Spinda
 Level: 27
@@ -5006,9 +5029,9 @@ Class: Leader
 Pic: Leader Winona
 Gender: Female
 Music: Female
-Items: Hyper Potion / Hyper Potion
 Double Battle: No
 AI: Basic Trainer / Risky
+No Bag: Yes
 
 Swablu
 Level: 29
@@ -5056,9 +5079,9 @@ Class: Leader
 Pic: Leader Tate And Liza
 Gender: Male
 Music: Female
-Items: Hyper Potion / Hyper Potion / Hyper Potion / Hyper Potion
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Claydol
 Level: 41
@@ -5098,9 +5121,9 @@ Class: Leader
 Pic: Leader Juan
 Gender: Male
 Music: Male
-Items: Hyper Potion / Hyper Potion
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Luvdisc
 Level: 41
@@ -5677,6 +5700,7 @@ Gender: Female
 Music: Twins
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Azurill @ Oran Berry
 Level: 35
@@ -5996,6 +6020,7 @@ Gender: Male
 Music: Male
 Double Battle: Yes
 AI: Check Bad Move
+No Bag: Yes
 
 Geodude
 Level: 11
@@ -6013,6 +6038,7 @@ Gender: Male
 Music: Male
 Double Battle: Yes
 AI: Check Bad Move
+No Bag: Yes
 
 Geodude
 Level: 13
@@ -6043,6 +6069,7 @@ Gender: Male
 Music: Male
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Zigzagoon
 Level: 17
@@ -6267,10 +6294,10 @@ Class: Champion
 Pic: Champion Wallace
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore / Full Restore / Full Restore
 Double Battle: No
 AI: Basic Trainer
 Mugshot: Yellow
+No Bag: Yes
 
 Wailord
 Level: 57
@@ -7369,6 +7396,7 @@ Gender: Male
 Music: Cool
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Doduo
 Level: 27
@@ -7390,6 +7418,7 @@ Gender: Male
 Music: Cool
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Skarmory
 Level: 30
@@ -7420,6 +7449,7 @@ Gender: Male
 Music: Cool
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Doduo
 Level: 29
@@ -7860,6 +7890,7 @@ Gender: Female
 Music: Intense
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Meditite
 Level: 13
@@ -7873,6 +7904,7 @@ Gender: Female
 Music: Intense
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Meditite
 Level: 13
@@ -9172,6 +9204,7 @@ Gender: Male
 Music: Hiker
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Numel
 Level: 23
@@ -9185,6 +9218,7 @@ Gender: Female
 Music: Twins
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Feebas @ Oran Berry
 Level: 39
@@ -9392,6 +9426,7 @@ Music: Magma
 Double Battle: No
 AI: Check Bad Move
 Multi Party: Half
+No Bag: Yes
 
 Camerupt
 Level: 36
@@ -9479,9 +9514,9 @@ Class: Rival
 Pic: Wally
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Altaria
 Level: 44
@@ -9531,6 +9566,7 @@ Gender: Male
 Music: Male
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Treecko
 Level: 5
@@ -9544,6 +9580,7 @@ Gender: Male
 Music: Male
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Slugma
 Level: 18
@@ -9565,6 +9602,7 @@ Gender: Male
 Music: Male
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Slugma
 Level: 29
@@ -9586,6 +9624,7 @@ Gender: Male
 Music: Male
 Double Battle: No
 AI: Check Bad Move / Try To Faint / Force Setup First Turn
+No Bag: Yes
 
 Torchic
 Level: 5
@@ -9599,6 +9638,7 @@ Gender: Male
 Music: Male
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Wingull
 Level: 18
@@ -9620,6 +9660,7 @@ Gender: Male
 Music: Male
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Pelipper
 Level: 29
@@ -9641,6 +9682,7 @@ Gender: Male
 Music: Male
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Mudkip
 Level: 5
@@ -9654,6 +9696,7 @@ Gender: Male
 Music: Male
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Lombre
 Level: 18
@@ -9675,6 +9718,7 @@ Gender: Male
 Music: Male
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Lombre
 Level: 29
@@ -9696,6 +9740,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Treecko
 Level: 5
@@ -9709,6 +9754,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Wingull
 Level: 18
@@ -9730,6 +9776,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Slugma
 Level: 29
@@ -9751,6 +9798,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Torchic
 Level: 5
@@ -9764,6 +9812,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Wingull
 Level: 18
@@ -9785,6 +9834,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Pelipper
 Level: 29
@@ -9806,6 +9856,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Mudkip
 Level: 5
@@ -9819,6 +9870,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Lombre
 Level: 18
@@ -9840,6 +9892,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Lombre
 Level: 29
@@ -10581,6 +10634,7 @@ Gender: Male
 Music: Hiker
 Double Battle: Yes
 AI: Check Bad Move
+No Bag: Yes
 
 Geodude
 Level: 14
@@ -10598,6 +10652,7 @@ Gender: Male
 Music: Male
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Machop
 Level: 13
@@ -10611,6 +10666,7 @@ Gender: Female
 Music: Intense
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Meditite
 Level: 13
@@ -10624,6 +10680,7 @@ Gender: Male
 Music: Intense
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Makuhita
 Level: 13
@@ -10637,6 +10694,7 @@ Gender: Female
 Music: Suspicious
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Meditite
 Level: 36
@@ -10738,6 +10796,7 @@ Gender: Male
 Music: Rich
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Spoink
 Level: 36
@@ -10751,6 +10810,7 @@ Gender: Female
 Music: Suspicious
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Kadabra
 Level: 36
@@ -10764,6 +10824,7 @@ Gender: Male
 Music: Rich
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Girafarig
 Level: 36
@@ -10777,6 +10838,7 @@ Gender: Male
 Music: Intense
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Wobbuffet
 Level: 36
@@ -10859,6 +10921,7 @@ Gender: Female
 Music: Intense
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Natu
 Level: 36
@@ -10872,6 +10935,7 @@ Gender: Male
 Music: Male
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Lotad
 Level: 13
@@ -10889,6 +10953,7 @@ Gender: Male
 Music: Male
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Wingull
 Level: 13
@@ -10953,6 +11018,7 @@ Gender: Male
 Music: Magma
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Numel
 Level: 18
@@ -10996,6 +11062,7 @@ Gender: Male
 Music: Male
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Slugma
 Level: 13
@@ -11013,6 +11080,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Check Bad Move / Try To Faint / Force Setup First Turn
+No Bag: Yes
 
 Wingull
 Level: 13
@@ -11028,9 +11096,9 @@ Class: Magma Leader
 Pic: Magma Leader Maxie
 Gender: Male
 Music: Magma
-Items: Super Potion / Super Potion
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Mightyena
 Level: 37
@@ -11050,9 +11118,9 @@ Class: Magma Leader
 Pic: Magma Leader Maxie
 Gender: Male
 Music: Magma
-Items: Super Potion / Super Potion
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Mightyena
 Level: 24
@@ -11248,6 +11316,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Luvdisc
 Level: 40
@@ -11261,6 +11330,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Goldeen
 Level: 39
@@ -11887,9 +11957,9 @@ Class: Cooltrainer
 Pic: Cooltrainer M
 Gender: Male
 Music: Cool
-Items: Hyper Potion
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Kecleon
 Level: 23
@@ -11907,6 +11977,7 @@ Gender: Female
 Music: Intense
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Meditite
 Level: 17
@@ -11932,6 +12003,7 @@ Gender: Female
 Music: Intense
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Meditite
 Level: 23
@@ -12024,6 +12096,7 @@ Gender: Male
 Music: Male
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Swellow
 Level: 29
@@ -12041,6 +12114,7 @@ Gender: Female
 Music: Girl
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Swablu
 Level: 27
@@ -12062,6 +12136,7 @@ Gender: Male
 Music: Male
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Ralts
 Level: 16
@@ -12073,9 +12148,9 @@ Class: Rival
 Pic: Wally
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Altaria
 Level: 47
@@ -12123,9 +12198,9 @@ Class: Rival
 Pic: Wally
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Altaria
 Level: 50
@@ -12173,9 +12248,9 @@ Class: Rival
 Pic: Wally
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Altaria
 Level: 53
@@ -12223,9 +12298,9 @@ Class: Rival
 Pic: Wally
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Altaria
 Level: 56
@@ -12275,6 +12350,7 @@ Gender: Male
 Music: Male
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Tropius
 Level: 31
@@ -12300,6 +12376,7 @@ Gender: Male
 Music: Male
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Tropius
 Level: 31
@@ -12325,6 +12402,7 @@ Gender: Male
 Music: Male
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Tropius
 Level: 31
@@ -12350,6 +12428,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Tropius
 Level: 31
@@ -12375,6 +12454,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Tropius
 Level: 31
@@ -12400,6 +12480,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Tropius
 Level: 31
@@ -13513,6 +13594,7 @@ Gender: Male
 Music: Magma
 Double Battle: No
 AI: Check Bad Move
+No Bag: Yes
 
 Numel
 Level: 26
@@ -13557,6 +13639,7 @@ Music: Magma
 Double Battle: No
 AI: Basic Trainer
 Multi Party: Half
+No Bag: Yes
 
 Mightyena
 Level: 42
@@ -14150,6 +14233,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Lotad
 Level: 13
@@ -14167,6 +14251,7 @@ Gender: Female
 Music: Female
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Torkoal
 Level: 13
@@ -14182,9 +14267,9 @@ Class: Leader
 Pic: Leader Roxanne
 Gender: Female
 Music: Female
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Golem
 Level: 32
@@ -14224,9 +14309,9 @@ Class: Leader
 Pic: Leader Roxanne
 Gender: Female
 Music: Female
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Omanyte
 Level: 37
@@ -14274,9 +14359,9 @@ Class: Leader
 Pic: Leader Roxanne
 Gender: Female
 Music: Female
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Omastar
 Level: 42
@@ -14324,9 +14409,9 @@ Class: Leader
 Pic: Leader Roxanne
 Gender: Female
 Music: Female
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Aerodactyl
 Level: 47
@@ -14382,9 +14467,9 @@ Class: Leader
 Pic: Leader Brawly
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Machamp @ Sitrus Berry
 Level: 33
@@ -14424,9 +14509,9 @@ Class: Leader
 Pic: Leader Brawly
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Machamp @ Sitrus Berry
 Level: 38
@@ -14466,9 +14551,9 @@ Class: Leader
 Pic: Leader Brawly
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Hitmonchan
 Level: 40
@@ -14516,9 +14601,9 @@ Class: Leader
 Pic: Leader Brawly
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Hitmonlee
 Level: 46
@@ -14574,9 +14659,9 @@ Class: Leader
 Pic: Leader Wattson
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Mareep
 Level: 36
@@ -14616,9 +14701,9 @@ Class: Leader
 Pic: Leader Wattson
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Pikachu
 Level: 39
@@ -14666,9 +14751,9 @@ Class: Leader
 Pic: Leader Wattson
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Raichu
 Level: 44
@@ -14716,9 +14801,9 @@ Class: Leader
 Pic: Leader Wattson
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Electabuzz
 Level: 50
@@ -14774,9 +14859,9 @@ Class: Leader
 Pic: Leader Flannery
 Gender: Female
 Music: Female
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Magcargo @ White Herb
 Level: 38
@@ -14816,9 +14901,9 @@ Class: Leader
 Pic: Leader Flannery
 Gender: Female
 Music: Female
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Growlithe
 Level: 41
@@ -14866,9 +14951,9 @@ Class: Leader
 Pic: Leader Flannery
 Gender: Female
 Music: Female
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Houndour
 Level: 46
@@ -14924,9 +15009,9 @@ Class: Leader
 Pic: Leader Flannery
 Gender: Female
 Music: Female
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Arcanine
 Level: 51
@@ -14982,9 +15067,9 @@ Class: Leader
 Pic: Leader Norman
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Chansey
 Level: 42
@@ -15024,9 +15109,9 @@ Class: Leader
 Pic: Leader Norman
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Slaking @ Sitrus Berry
 Level: 47
@@ -15074,9 +15159,9 @@ Class: Leader
 Pic: Leader Norman
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Slaking @ Sitrus Berry
 Level: 52
@@ -15124,9 +15209,9 @@ Class: Leader
 Pic: Leader Norman
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Slaking @ Sitrus Berry
 Level: 57
@@ -15182,9 +15267,9 @@ Class: Leader
 Pic: Leader Winona
 Gender: Female
 Music: Female
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer / Risky
+No Bag: Yes
 
 Dratini @ Sitrus Berry
 Level: 40
@@ -15232,9 +15317,9 @@ Class: Leader
 Pic: Leader Winona
 Gender: Female
 Music: Female
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer / Risky
+No Bag: Yes
 
 Hoothoot
 Level: 43
@@ -15290,9 +15375,9 @@ Class: Leader
 Pic: Leader Winona
 Gender: Female
 Music: Female
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer / Risky
+No Bag: Yes
 
 Noctowl
 Level: 48
@@ -15348,9 +15433,9 @@ Class: Leader
 Pic: Leader Winona
 Gender: Female
 Music: Female
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer / Risky
+No Bag: Yes
 
 Noctowl
 Level: 53
@@ -15406,9 +15491,9 @@ Class: Leader
 Pic: Leader Tate And Liza
 Gender: Male
 Music: Female
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Slowpoke
 Level: 48
@@ -15456,9 +15541,9 @@ Class: Leader
 Pic: Leader Tate And Liza
 Gender: Male
 Music: Female
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Drowzee
 Level: 53
@@ -15514,9 +15599,9 @@ Class: Leader
 Pic: Leader Tate And Liza
 Gender: Male
 Music: Female
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Hypno
 Level: 58
@@ -15572,9 +15657,9 @@ Class: Leader
 Pic: Leader Tate And Liza
 Gender: Male
 Music: Female
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Hypno
 Level: 63
@@ -15630,9 +15715,9 @@ Class: Leader
 Pic: Leader Juan
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Poliwag
 Level: 46
@@ -15680,9 +15765,9 @@ Class: Leader
 Pic: Leader Juan
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Poliwhirl
 Level: 50
@@ -15730,9 +15815,9 @@ Class: Leader
 Pic: Leader Juan
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Lapras
 Level: 56
@@ -15788,9 +15873,9 @@ Class: Leader
 Pic: Leader Juan
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore / Full Restore
 Double Battle: Yes
 AI: Basic Trainer
+No Bag: Yes
 
 Lapras
 Level: 61
@@ -15848,6 +15933,7 @@ Gender: Male
 Music: Suspicious
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Illumise
 Level: 17
@@ -15871,6 +15957,7 @@ Gender: Male
 Music: Cool
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Tropius
 Level: 30
@@ -15882,9 +15969,9 @@ Class: Rival
 Pic: Steven
 Gender: Male
 Music: Male
-Items: Full Restore / Full Restore / Full Restore / Full Restore
 Double Battle: No
 AI: Basic Trainer
+No Bag: Yes
 
 Skarmory
 Level: 77
@@ -16856,6 +16943,7 @@ Pic: Red
 Gender: Male
 Music: Male
 Double Battle: No
+No Bag: Yes
 
 Charmander
 Level: 5
@@ -16868,6 +16956,7 @@ Pic: Leaf
 Gender: Female
 Music: Male
 Double Battle: No
+No Bag: Yes
 
 Bulbasaur
 Level: 5

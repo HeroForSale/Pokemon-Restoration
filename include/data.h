@@ -137,7 +137,7 @@ struct Trainer
     u16 battleType:2;
     u16 mugshotColor:3;
     u16 partySize:3;
-    u16 padding:1;
+    u16 noBagUse:1; // Restoration: no bag items in battle, for the player or the AI
     enum TrainerPicID trainerPic;
     u8 trainerName[TRAINER_NAME_LENGTH + 1];
     u8 poolSize;
@@ -345,6 +345,14 @@ static inline const u8 GetTrainerMugshotColorFromId(u16 trainerId)
 static inline const enum Item *GetTrainerItemsFromId(u16 trainerId)
 {
     return GetTrainerStructFromId(trainerId)->items;
+}
+
+// Restoration: major battles (gyms, E4, rivals, team admins/leaders) set "No Bag: Yes" in trainers.party.
+static inline bool32 IsNoBagTrainer(u16 trainerId)
+{
+    if (trainerId == TRAINER_NONE || IsSpecialTrainer(trainerId) || IsPartnerTrainerId(trainerId))
+        return FALSE;
+    return GetTrainerStructFromId(trainerId)->noBagUse;
 }
 
 static inline const struct TrainerMon *GetTrainerPartyFromId(u16 trainerId)
